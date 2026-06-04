@@ -18,7 +18,7 @@
 ;
 ; Public:
 ;   lr2-disc p q            -> the discriminant D = p^2 + 4q
-;   lr2-solve p q a0 a1     -> the closed form (above) | 'use-linrec (D a perfect square) 
+;   lr2-solve p q a0 a1     -> the closed form (above) | 'use-linrec (D a perfect square)
 ;   lr2-eval cf n           -> a_n (rational) from the closed form
 ;   lr2-certify cf p q a0 a1 N -> #t iff the closed form matches the iterated recurrence for n = 0..N
 ;   lr2-fib n / lr2-lucas n -> Fibonacci / Lucas via the closed form (convenience, for testing)

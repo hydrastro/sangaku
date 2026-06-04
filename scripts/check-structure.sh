@@ -15,10 +15,11 @@ echo "  examples:        $(ls examples/*.lisp 2>/dev/null | wc -l)"
 echo "  golden pairs:    $(ls tests/cas_*.lisp 2>/dev/null | wc -l) lisp / $(ls tests/cas_*.expected 2>/dev/null | wc -l) expected"
 
 echo "== external imports (should be only logic.lisp) =="
-ext="$(grep -rhoE '\(import "[^"]+"\)' src/cas/*.lisp 2>/dev/null | grep -v 'cas/' | sort -u)"
+# match the quoted path regardless of trailing ':as alias', then drop the cas/ ones
+ext="$(grep -rhoE '\(import[[:space:]]+"[^"]+"' src/cas/*.lisp 2>/dev/null | sed -E 's/.*"([^"]+)".*/\1/' | grep -v '^cas/' | sort -u)"
 if [ -z "$ext" ]; then
   echo "  none beyond cas/ — fully self-contained"
-elif [ "$ext" = '(import "logic.lisp")' ]; then
+elif [ "$ext" = 'logic.lisp' ]; then
   echo "  only logic.lisp (bundled at src/logic.lisp) — ok"
   [ -f src/logic.lisp ] || { echo "  ERROR: logic.lisp imported but src/logic.lisp missing"; problems=$((problems+1)); }
 else

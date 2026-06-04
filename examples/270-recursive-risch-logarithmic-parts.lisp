@@ -33,7 +33,7 @@
 
 ; ===== (0) base-field logarithms are no longer discarded =====
 (display "base field Q(x):") (newline)
-(must "INT 1/(x^2-1) dx = (1/2) log((x+1)/(x-1))            certified" 
+(must "INT 1/(x^2-1) dx = (1/2) log((x+1)/(x-1))            certified"
       (let ((p (rat-make (list 1) (list -1 0 1)))) (ntl-verify 0 (quote ()) p (ntl-integrate 0 (quote ()) p))))
 
 ; ===== (1) proper-fraction logarithmic parts at increasing depth =====

@@ -86,7 +86,7 @@
                       (if (< (- D P) 0) (quote nosolution)
                           (let ((bbar (xrde-assemble (xrde-solve-l num uc k P l (- D P) (quote ())) 0 (- D P))))
                             (let ((b (k1-normalize (list bbar (rf-theta1-pow l)))))
-                              (if (exp-rde-check a k uprime b mono1) b (quote nosolution))))))))))))) 
+                              (if (exp-rde-check a k uprime b mono1) b (quote nosolution)))))))))))))
 (define (exp-rde-laurent-solvable? a k uprime mono1) (if (equal? (exp-rde-laurent a k uprime mono1) (quote nosolution)) #f #t))
 
 ; ----- height-two exponential integrator using the RDE solver (generalizes the exact-power case) -----

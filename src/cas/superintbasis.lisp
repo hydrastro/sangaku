@@ -41,7 +41,7 @@
 (define (sib-power-basis n) (sib-range 0 n))
 (define (sib-range a b) (if (>= a b) (quote ()) (cons a (sib-range (+ a 1) b))))
 
-; ----- the monic defining polynomial of y^k: t^n - f^k, as ((1 . n) (-f^k-coeffs... )) ----- 
+; ----- the monic defining polynomial of y^k: t^n - f^k, as ((1 . n) (-f^k-coeffs... )) -----
 ; we represent it abstractly as (list 'monic n (f^k poly)) meaning t^n - (that poly)
 (define (sib-element-minpoly n f k) (list (quote monic) n (sib-fpow f k)))
 (define (sib-fpow f k) (if (<= k 0) (list 1) (poly-mul f (sib-fpow f (- k 1)))))

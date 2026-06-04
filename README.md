@@ -72,9 +72,28 @@ src/            the Sangaku library
 examples/       243 runnable, self-checking examples
 tests/          golden tests (cas_*.lisp + cas_*.expected), byte-for-byte
 docs/           design notes and the capability/roadmap writeups
-scripts/        sangaku (launcher), test.sh, run-examples.sh
+scripts/        sangaku (launcher), test.sh, run-examples.sh,
+                clean.sh, lint.sh, regen-goldens.sh,
+                find-orphans.sh, check-structure.sh
 flake.nix       Nix build/dev shell; fetches the Lizard interpreter
 ```
+
+## Maintenance scripts
+
+All scripts live in `scripts/` and assume either Nix (`nix develop`) or `$LIZARD` set to a Lizard
+binary. The interpreter-free ones (`lint`, `check-structure`, `find-orphans`, `clean`) need nothing
+installed.
+
+| Script | What it does |
+| --- | --- |
+| `sangaku FILE.lisp` | Run a Sangaku file with the library on the import path. |
+| `test.sh` | Run the golden tests and the example suite (the full check). |
+| `run-examples.sh` | Run only the example suite (quicker). |
+| `lint.sh` | Static check: parenthesis balance, parens-glued-inside-tokens (a real reader trap), tabs, trailing whitespace. No interpreter needed. |
+| `check-structure.sh` | Verify the repo is self-contained: external imports, golden pairing, prelude. No interpreter needed. |
+| `find-orphans.sh` | Report unpaired goldens and modules imported by nothing (candidate dead code). Advisory. |
+| `regen-goldens.sh [name...]` | Regenerate golden `.expected` files after an intentional, verified output change, with a determinism re-check. Overwrites — review `git diff tests/` after. |
+| `clean.sh [--dry-run]` | Remove Nix `result` links, any interpreter build artifacts, and editor/OS cruft. Never touches source. |
 
 ## How the certificates work
 

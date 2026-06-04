@@ -98,7 +98,7 @@
         (let ((integ (af-make (rat-zero) (rat-make (list 1) (poly-mul (list (- 0 s) 1) pp)))))
           (let ((gpovg (af-div p (af-deriv p f) f)))
             (if (af-zero-elt? gpovg) (list (quote failed) (quote degenerate))
-                (let ((c (af-div p integ gpovg))) 
+                (let ((c (af-div p integ gpovg)))
                   (if (ell-const? c)
                       (if (af-certify p (af-zero) (af-u c) f integ) (list (quote log) (af-u c) f) (list (quote failed) (quote certificate)))
                       (list (quote failed) (quote nonconstant)))))))))))

@@ -90,7 +90,7 @@
                         (let ((ord (elt-order P a2 a1)))
                           (if (equal? ord (quote infinite))
                               (list (quote non-elementary) (quote infinite-order))
-                              (list (quote elementary) (quote elliptic-log) ord)))))))))))) 
+                              (list (quote elementary) (quote elliptic-log) ord))))))))))))
 (define (elt-decides-elementary? p s) (equal? (car (elt-decide p s)) (quote elementary)))
 
 ; perfect-square test over Q (reused shape from algthird)

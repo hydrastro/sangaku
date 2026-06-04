@@ -276,4 +276,4 @@
             ((equal? (car res) (quote algebraic)) (list (quote non-elementary) "logarithmic part has algebraic (non-rational) residues"))
             (else (list (quote none)))))))
 (define (rt-integrate-logpart-decides? L specs Pnum V)
-  (let ((r (rt-integrate-logpart L specs Pnum V))) (equal? (car r) (quote elementary)))) 
+  (let ((r (rt-integrate-logpart L specs Pnum V))) (equal? (car r) (quote elementary))))

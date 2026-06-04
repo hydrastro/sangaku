@@ -22,7 +22,7 @@
 ;   vh-correction br k          -> c(x): the part of a rational branch below order k (the singular part), or
 ;                                  'needs-place-combination if the branch is ramified (q>1)
 ;   vh-correct-level1 F k M     -> (list 'corrected c d-power) giving w = (y - c)/x^k integral, with a witness
-;                                  that y/x^k was NOT integral; or 'no-correction-needed / 'needs-... 
+;                                  that y/x^k was NOT integral; or 'no-correction-needed / 'needs-...
 ;   vh-certify-correction F N k M -> #t iff N/x^k is integral AND (N without its constant-in-y part)/x^k is not
 ;                                  (i.e. the correction genuinely matters)
 ;
