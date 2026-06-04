@@ -1,0 +1,16 @@
+# Nix
+result
+result-*
+.direnv/
+
+# Editor / OS
+*.swp
+*~
+.DS_Store
+
+# Lizard build artifacts (if a vendored/local interpreter is ever built here)
+build/
+*.o
+*.a
+*.so
+*.d

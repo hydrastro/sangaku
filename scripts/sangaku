@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# scripts/sangaku -- run a Sangaku Lisp file with the library on the module path.
+#
+#   scripts/sangaku examples/388-definite-integral-theorems.lisp
+#   scripts/sangaku my-proof.lisp
+#
+# Sangaku is pure Lisp; it runs on the Lizard interpreter. Because Lizard takes a single
+# script, we feed it the prelude (which registers the library path) followed by your file,
+# concatenated on standard input. Set LIZARD to the interpreter if it is not on PATH.
+# Lizard: https://github.com/hydrastro/lizard
+set -u
+ROOT="${SANGAKU_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+LIZARD="${LIZARD:-lizard}"
+cd "$ROOT" || exit 2
+cat src/prelude.lisp "$@" | "$LIZARD"
