@@ -1,3 +1,15 @@
+# CAS frontier: univariate real quantifier elimination (a genuine decision procedure)
+
+- Added `src/cas/realqe.lisp`: UNIVARIATE REAL QUANTIFIER ELIMINATION -- a complete DECISION PROCEDURE for "exists x . phi" and "for all x . phi" over the reals in one variable, phi a boolean combination of polynomial sign conditions. The exact one-dimensional case of Tarski's theorem / CAD. By sign-invariant cell decomposition: the real roots of the polynomials cut R into cells of constant sign, and the statement is decided by sampling phi at one exact-rational point per open cell (below/between/above the isolated roots), with root cells evaluated by sign-on-the-isolating-interval -- exact over Q, no irrational coordinates. Decides strict and non-strict inequalities, universals, and equality-witness conjunctions (e.g. x-3=0 and x^2-3x+2>0 is true; x-2=0 and x^2-3x+2>0 is false). This is a genuine DECISION (not a certificate to supply), a real step beyond last turn's checker. Example 397 + golden cas_realqe.
+- Extended `src/cas/tptp/core.lisp` with a `real-qe` goal shape routing univariate real statements to the decision procedure (theorem / countersat -- it decides). Existing routes unchanged; bridge golden extended.
+- Zero regressions; structure and lint clean. The multivariate case (full CAD with projection/lifting) is named as the frontier ahead.
+
+# CAS frontier: the constrained Positivstellensatz (and wiring it into the TPTP-arith bridge)
+
+- Added `src/cas/positivstellensatz.lisp`: CONSTRAINED positivity certificates -- proving p >= 0 on a semialgebraic set S = {g_i >= 0} by a weighted-SOS (Positivstellensatz/Putinar) certificate p = sigma_0 + sum_i sigma_i g_i with every sigma_j a sum of squares. Sound by construction (on S the RHS is manifestly >= 0); verified exactly over Q by checking the polynomial identity and that each sigma_j is SOS (decided for univariate sigma_j via sos.lisp). Verified: x>=0 on {x-1>=0} (sigma_0=1,sigma_1=1); x^2-1>=0 on {x-1>=0} (sigma_0=(x-1)^2,sigma_1=2); rejects a non-SOS multiplier (the false x-3>=0 on {x-1>=0}, which fails at x=1) and a broken identity, each with a named reason; empty constraints reduce to plain SOS. Like SOS this CERTIFIES, not DECIDES (finding multipliers is a semidefinite search). Example 396 + golden cas_positivstellensatz.
+- Extended `src/cas/tptp/core.lisp` with a `nonneg-on-set` goal shape that routes constrained-nonnegativity goals ("for all x in S, p(x) >= 0") to the Positivstellensatz checker: 'theorem with a valid certificate, 'unknown without (never falsely refuted). Existing routes unchanged (additive). Golden cas_tptparith extended for coverage.
+- This is the frontier rung directly above unconstrained SOS, and it makes the bridge able to settle guarded arithmetic goals. Zero regressions; structure and lint clean.
+
 # CAS frontier: multivariate SOS certificates + a TPTP-arithmetic bridge (side project)
 
 MAIN FRONTIER

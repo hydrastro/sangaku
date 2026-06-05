@@ -18,6 +18,10 @@
 ;   (poly-identity p q)                -- claim: p = q as polynomials (equivalently p - q is the zero polynomial)
 ;   (nonneg p)                         -- claim: for all real x, p(x) >= 0   (univariate p: a DECISION)
 ;   (nonneg-sos p (q_1 ... q_k))       -- claim: p >= 0, witnessed by the SOS decomposition p = sum q_i^2 (any arity)
+;   (nonneg-on-set p psatz-cert)       -- claim: p >= 0 on a semialgebraic set, witnessed by a Positivstellensatz
+;                                         certificate (sigma_0 . ((sigma_i . g_i) ...)) -- proved on the set, else unknown
+;   (real-qe quant phi)                -- a univariate real statement: quant in {exists forall}, phi a boolean
+;                                         combination of sign conditions -- DECIDED exactly (theorem or countersat)
 ;   (ground rel a b)                   -- a variable-free comparison: rel in {= < <= > >=}, a, b rational constants
 ; Univariate polynomials use the coefficient-list representation (low->high); the multivariate forms use the mpoly
 ; representation of groebner.lisp.  The classifier tptp-shape reports which form a goal is; tptp-decide routes it.
@@ -49,6 +53,8 @@
 (import "cas/nullstellensatz.lisp")
 (import "cas/sos.lisp")
 (import "cas/sosmv.lisp")
+(import "cas/positivstellensatz.lisp")
+(import "cas/realqe.lisp")
 
 ; ----- small list helpers -----
 (define (tptp-tag g) (car g))
@@ -63,6 +69,8 @@
         ((equal? (tptp-tag goal) (quote poly-identity)) (quote poly-identity))
         ((equal? (tptp-tag goal) (quote nonneg)) (quote nonneg))
         ((equal? (tptp-tag goal) (quote nonneg-sos)) (quote nonneg-sos))
+        ((equal? (tptp-tag goal) (quote nonneg-on-set)) (quote nonneg-on-set))
+        ((equal? (tptp-tag goal) (quote real-qe)) (quote real-qe))
         ((equal? (tptp-tag goal) (quote ground)) (quote ground))
         (else (quote unrecognized))))
 
@@ -94,6 +102,10 @@
                (else (quote countersat))))           ; univariate is decided: not-nonneg => the claim is false
         ((equal? shape (quote nonneg-sos))
          (if (mvsos-is-certificate? (tptp-a1 goal) (tptp-a2 goal)) (quote theorem) (quote unknown)))
+        ((equal? shape (quote nonneg-on-set))
+         (if (psatz-valid? (tptp-a1 goal) (tptp-a2 goal)) (quote theorem) (quote unknown)))
+        ((equal? shape (quote real-qe))
+         (if (qe-decide (tptp-a1 goal) (tptp-a2 goal)) (quote theorem) (quote countersat)))
         ((equal? shape (quote ground))
          (if (tptp-ground-holds? (tptp-a1 goal) (tptp-a2 goal) (tptp-a3 goal)) (quote theorem) (quote countersat)))
         (else (quote outside-fragment))))
@@ -105,6 +117,8 @@
         ((equal? shape (quote poly-identity)) (list (quote identity-residual) (poly-sub (tptp-a1 goal) (tptp-a2 goal))))
         ((equal? shape (quote nonneg)) (sos-certificate (tptp-a1 goal)))
         ((equal? shape (quote nonneg-sos)) (mvsos-certify (tptp-a1 goal) (tptp-a2 goal)))
+        ((equal? shape (quote nonneg-on-set)) (psatz-certify (tptp-a1 goal) (tptp-a2 goal)))
+        ((equal? shape (quote real-qe)) (list (quote qe-verdict) (tptp-a1 goal) (qe-decide (tptp-a1 goal) (tptp-a2 goal))))
         ((equal? shape (quote ground)) (list (quote ground-eval) (tptp-a1 goal) (tptp-a2 goal) (tptp-a3 goal)))
         (else (quote none))))
 
@@ -114,6 +128,8 @@
         ((equal? shape (quote poly-identity)) (quote polynomial-identity))
         ((equal? shape (quote nonneg)) (quote univariate-sos-decision))
         ((equal? shape (quote nonneg-sos)) (quote multivariate-sos-certificate))
+        ((equal? shape (quote nonneg-on-set)) (quote constrained-positivstellensatz))
+        ((equal? shape (quote real-qe)) (quote univariate-real-qe))
         ((equal? shape (quote ground)) (quote ground-arithmetic))
         (else (quote none))))
 

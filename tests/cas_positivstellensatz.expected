@@ -1,0 +1,5 @@
+(0 1) #t proved-nonneg-on-set
+#t (nonneg-on-set constraints 1)
+#f (invalid-certificate multiplier-not-sos)
+(invalid-certificate identity-fails)
+#t

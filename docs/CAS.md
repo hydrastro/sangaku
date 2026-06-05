@@ -4276,3 +4276,37 @@ specialized backend, and its value is precisely the certificate-carrying soundne
 breadth across all of first-order logic.  The TPTP syntax itself is parsed by the companion project tptptp; the
 bridge consumes goals lowered into its normalized forms.  Started inside Sangaku, it can be split into its own
 package as it grows.
+
+## Constrained positivity: the Positivstellensatz (positivstellensatz.lisp)
+
+Unconstrained SOS (sos.lisp) certifies p >= 0 on all of R; this module certifies p >= 0 on a SEMIALGEBRAIC SET
+S = {g_1 >= 0, ..., g_m >= 0}, by a weighted sum-of-squares (Positivstellensatz / Putinar) certificate
+p = sigma_0 + sum_i sigma_i g_i with every sigma_j a sum of squares.  On S each g_i >= 0 and each sigma_j >= 0, so
+the right-hand side is >= 0 and therefore p >= 0 on S -- a checkable proof, verified exactly over Q by checking the
+polynomial identity and that each sigma_j is SOS (decided exactly for univariate sigma_j).  It proves x >= 0 on
+{x-1>=0} (via sigma_0=1, sigma_1=1) and x^2-1 >= 0 on {x-1>=0} (via sigma_0=(x-1)^2, sigma_1=2); it rejects a
+certificate with a non-SOS multiplier (e.g. sigma_0=-2 for the false claim x-3>=0 on {x-1>=0}, which fails at x=1)
+and a broken identity, each with the reason named; with no constraints it reduces to plain SOS.  Like SOS this
+CERTIFIES rather than DECIDES -- by the Positivstellensatz a representation exists for every p strictly positive on
+a compact S, but finding the multipliers is a semidefinite feasibility search; Sangaku verifies a supplied
+certificate.  The constrained nonnegativity goal "for all x in S, p(x) >= 0" is now provable, and the TPTP-arith
+bridge routes exactly that shape (nonneg-on-set) here.  The general multivariate Putinar search and the full real
+decision (Tarski quantifier elimination) remain the frontier ahead.
+
+## Univariate real quantifier elimination (realqe.lisp)
+
+Where positivstellensatz.lisp verifies a supplied certificate, realqe.lisp DECIDES: it is a complete decision
+procedure for first-order statements over the reals in one variable -- "exists x . phi(x)" and "for all x . phi(x)"
+for phi a boolean combination of polynomial sign conditions -- the exact one-dimensional case of Tarski's theorem
+and cylindrical algebraic decomposition.  The real roots of all polynomials in the statement partition R into
+finitely many cells (the open intervals between consecutive roots, and the root points), and every polynomial has
+constant sign on each cell; so phi has constant truth per cell, and the quantified statement is decided by sampling
+phi at one point per cell -- "exists" iff some sample satisfies it, "for all" iff every sample does.  Sample points
+are exact rationals taken below, between, and above the isolated real roots; the root points are evaluated by
+sign-on-the-isolating-interval, so no irrational coordinate is ever needed and the procedure is exact over Q.  It
+decides, for instance, that there is a real x with x^2 - 1 < 0, that x^2 + 1 > 0 for all x, that x^2 - 1 >= 0 fails
+for some x, that x^2 + 1 = 0 has no real solution, and -- handling the root cells -- that x - 3 = 0 and x^2-3x+2 > 0
+hold together while x - 2 = 0 and x^2-3x+2 > 0 do not.  Unlike the SOS and Positivstellensatz certificates, this is
+a genuine decision (a yes/no answer with no witness to supply), and it gives the TPTP-arith bridge a real-qe route
+that settles a broad class of one-variable arithmetic statements.  The multivariate case -- full cylindrical
+algebraic decomposition, with projection across variables and lifting -- is the frontier ahead; this is its base.

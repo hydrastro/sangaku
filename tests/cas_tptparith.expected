@@ -7,3 +7,5 @@ unknown
 theorem countersat
 outside-fragment
 (theorem nullstellensatz (refuted (((1 0)))))
+theorem constrained-positivstellensatz
+theorem univariate-real-qe

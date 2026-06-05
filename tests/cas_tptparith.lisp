@@ -14,3 +14,7 @@
 (display (tptp-decide (list (quote ground) (quote =) 4 4))) (display " ") (display (tptp-decide (list (quote ground) (quote <) 3 2))) (newline)
 (display (tptp-decide (list (quote some-fol-formula) 1 2))) (newline)
 (display (tptp-explain (list (quote poly-unsat) (list x x-1)))) (newline)
+(define g1c (list -1 1))
+(define certc (cons (list 1) (list (cons (list 1) g1c))))
+(display (tptp-decide (list (quote nonneg-on-set) (list 0 1) certc))) (display " ") (display (tptp-route-name (tptp-shape (list (quote nonneg-on-set) (list 0 1) certc)))) (newline)
+(display (tptp-decide (list (quote real-qe) (quote forall) (cons (quote pos) (list 1 0 1))))) (display " ") (display (tptp-route-name (tptp-shape (list (quote real-qe) (quote forall) (cons (quote pos) (list 1 0 1)))))) (newline)

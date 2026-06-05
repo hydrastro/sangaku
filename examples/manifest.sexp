@@ -2,3 +2,5 @@
 (example "393-sos-positivity.lisp" :expect pass)
 (example "394-multivariate-sos-certificate.lisp" :expect pass)
 (example "395-tptp-arith-bridge.lisp" :expect pass)
+(example "396-constrained-positivstellensatz.lisp" :expect pass)
+(example "397-univariate-real-qe.lisp" :expect pass)
