@@ -4,3 +4,4 @@
 (example "395-tptp-arith-bridge.lisp" :expect pass)
 (example "396-constrained-positivstellensatz.lisp" :expect pass)
 (example "397-univariate-real-qe.lisp" :expect pass)
+(example "398-cad-projection.lisp" :expect pass)

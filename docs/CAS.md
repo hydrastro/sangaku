@@ -4310,3 +4310,23 @@ hold together while x - 2 = 0 and x^2-3x+2 > 0 do not.  Unlike the SOS and Posit
 a genuine decision (a yes/no answer with no witness to supply), and it gives the TPTP-arith bridge a real-qe route
 that settles a broad class of one-variable arithmetic statements.  The multivariate case -- full cylindrical
 algebraic decomposition, with projection across variables and lifting -- is the frontier ahead; this is its base.
+
+## Toward multivariate real QE: the CAD projection phase (cadproj.lisp)
+
+The univariate real decision procedure (realqe.lisp) is the base case of cylindrical algebraic decomposition; the
+step toward the multivariate frontier is the PROJECTION phase, and cadproj.lisp builds it exactly over Q.  A
+bivariate polynomial p(x,y) is carried as a polynomial in y whose coefficients are polynomials in x.  The resultant
+Res_y(p,q) is computed as the determinant of the Sylvester matrix over the ring Q[x] -- the entries are polynomials,
+the determinant is taken by exact cofactor expansion with polynomial arithmetic and no division -- and Res_y(p,q)
+vanishes at exactly the x where the curves p(x,y)=0 and q(x,y)=0 share a y-coordinate.  The y-discriminant
+disc_y(p) = Res_y(p, dp/dy) vanishes where a fiber acquires a repeated y-root.  The projection of a family of curves
+is the set of these discriminants and pairwise resultants: the real roots of their product partition the x-axis into
+intervals over which the fiber structure is constant -- precisely the cells over which a cylindrical decomposition
+would erect its sample points.  Verified exactly: Res_y(y^2 - x, y - x) = x^2 - x (the parabola meets the line at
+x = 0 and x = 1), disc_y(y^2 - x) is a multiple of x (the fiber degenerates at the origin), and Res_y of the unit
+circle with the x-axis is x^2 - 1 (the circle meets it at +-1).  This is the projection phase only; the LIFTING phase
+(constructing sample points in the (x,y)-plane over each x-cell, evaluating the fibers, and assembling the
+two-dimensional decomposition) and the recursion to n variables remain the frontier ahead -- cad-lifting-caveat
+states this rather than overstating what is built.  But projection is the indispensable first half, and it is here,
+exact: it turns a two-variable sign-condition problem into a finite set of one-variable problems the existing real-QE
+base can decide.
