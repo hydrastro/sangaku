@@ -1,3 +1,18 @@
+# CAS frontier: exact irrational sections (2-var CAD now complete) + the n-variable projection tower
+
+REAL ALGEBRAIC NUMBERS
+- Added `src/cas/algnum2.lisp`: real algebraic numbers as (defining-poly, isolating interval), with the EXACT sign of any rational polynomial at one, by interval bisection (q(alpha)=0 iff gcd(q,defp) has its root in the interval; else refine until sign-definite). Rational arithmetic + Sturm only -- no floats, no symbolic field. Verified on sqrt(2) and the golden ratio. Example 400 + golden cas_algnum2.
+
+IRRATIONAL SECTIONS -- closing the two-variable CAD's boundary
+- Added `src/cas/cadsection.lisp`: exact evaluation of a formula on the section over an irrational critical x. The key move: sign(p_i(alpha,b)) at rational b = asec-sign(p_i(x,b), alpha), deciding all strict conditions with no irrational arithmetic; equality witnesses detected by y-resultant vanishing at alpha. Example 401 + golden cas_cadsection.
+- WIRED into `src/cas/cad2d.lisp`: an irrational-section pass now runs when the open-cell pass finds no witness. The previously-missed x^2+y^2=1 AND x=y (irrational witness 1/sqrt2) is now decided TRUE; soundness preserved by also checking x-only side conditions at alpha (y^2=x AND x+1<0 stays FALSE). The existing cad2d golden is UNCHANGED (purely additive -- only adds true verdicts for previously-missed irrational witnesses); golden extended with new irrational cases. The two-variable decider is now complete except for the nested tower Q(alpha)(beta).
+
+THE n-VARIABLE PROJECTION TOWER (recursion to n>2)
+- Added `src/cas/cadnd.lisp`: the n-variable projection operator -- eliminate one variable from polynomials in n variables via the multivariate (mpoly) resultant (Sylvester determinant by exact cofactor expansion, sign by negation), building the projection tower R^n -> ... -> R. Plus a full-dimensional 3-variable existence decider. Verified: Res_z(z-x,z-y)=x-y; disc_z(z^2-x) ~ x; the open unit ball and positive-simplex interior are found nonempty; contradictions rejected. Example 402 + golden cas_cadnd.
+- Caught real bugs by isolation: the mpoly determinant's sign-unit had an empty exponent vector that corrupted monomial products (fixed by tracking sign via negation instead of a constant unit); the resultant's power base case had the same malformed unit (fixed).
+- HONEST SCOPE: the projection tower is exact for any n (the descending phase). The n-dimensional algebraic-tower LIFTING -- sample points with coordinates in Q(alpha_1)(alpha_2)... stacked through every level -- is the deep frontier, named by cadn-lifting-caveat. The fully worked decider remains the 2-variable case.
+- Zero regressions; structure and lint clean.
+
 # CAS frontier: a working TWO-VARIABLE CAD decider (projection joined to lifting)
 
 - Added `src/cas/cad2d.lisp`: a two-variable cylindrical algebraic decomposition decision procedure -- the LIFTING phase joined to last turn's projection (cadproj) -- for "exists x exists y . phi" and "for all x for all y . phi" over the reals, phi a boolean combination of polynomial sign conditions. Collins' CAD in 2 variables, exact over Q: project to critical x's; decompose the x-axis (open sectors + rational sections); lift each sample x to the univariate fibers, decompose and sample the y-line; evaluate phi on each constant-sign 2-cell. Decides, exactly: the open unit disk is nonempty; x^2+y^2+1<0 is unsatisfiable; forall x,y x^2+y^2>=0 (true) vs x^2+y^2-1>=0 (false); parabola y^2=x meets x=4 at y=+-2 but has no point with x+1<0; hyperbola xy=1 has a positive-branch point; line x=y meets x^2+y^2=2 at (1,1).

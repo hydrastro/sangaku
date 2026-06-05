@@ -6,3 +6,6 @@
 (example "397-univariate-real-qe.lisp" :expect pass)
 (example "398-cad-projection.lisp" :expect pass)
 (example "399-two-variable-cad.lisp" :expect pass)
+(example "400-real-algebraic-numbers.lisp" :expect pass)
+(example "401-irrational-sections.lisp" :expect pass)
+(example "402-n-variable-projection.lisp" :expect pass)

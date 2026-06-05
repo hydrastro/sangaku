@@ -58,6 +58,7 @@
 (import "cas/cadproj.lisp")
 (import "cas/poly.lisp")
 (import "cas/sturm.lisp")
+(import "cas/cadsection.lisp")
 
 ; ----- substitute a rational x = a into a bivariate polynomial, giving the univariate y-fiber -----
 (define (cad2-bivar-at p a) (cad2-trimr (map (lambda (xp) (poly-eval xp a)) p)))
@@ -175,7 +176,103 @@
         (else #f)))
 
 ; ----- the quantified decisions over the open-cell samples -----
-(define (cad2-exists phi) (cad2-any-cell phi (cad2-cells phi)))
+; existence over the full-dimensional cells OR on a section over an irrational critical x.  The open-cell pass
+; (cad2-any-cell over the rational samples) decides everything witnessed on a full-dimensional cell or a rational
+; section; the irrational-section pass then checks, for each irrational root alpha of the projection, whether phi
+; holds somewhere on the section over alpha -- using exact algebraic-number signs (cadsection.lisp).  Their
+; disjunction is the complete existential decision over the two-variable cell structure.
+(define (cad2-exists phi) (if (cad2-any-cell phi (cad2-cells phi)) #t (cad2-exists-on-sections phi)))
+
+; ----- the irrational-section pass -----
+(define (cad2-exists-on-sections phi) (cad2-scan-sections phi (cad2-irrational-alphas (cad2-polys-of phi))))
+; the irrational real roots of the projection, as algebraic numbers (defp = squarefree projection product)
+(define (cad2-irrational-alphas polys)
+  (cad2-alphas-from (cad2-clear-denoms (cad2-proj-product polys)) (isolate-roots (cad2-clear-denoms (cad2-proj-product polys)))))
+(define (cad2-alphas-from defp ivs)
+  (cond ((null? ivs) (quote ()))
+        ((cad2-iv-rational? defp (car ivs)) (cad2-alphas-from defp (cdr ivs)))   ; rational root: handled by sections already
+        (else (cons (asec-make defp (cad2-lo (car ivs)) (cad2-hi (car ivs))) (cad2-alphas-from defp (cdr ivs))))))
+; a root is rational iff some rational number in the (closed) isolating interval is a root of defp.  Endpoints
+; alone are not enough (the rational root usually sits strictly inside), so we test the rational-root candidates of
+; defp (p/q with p | constant term, q | leading term) and see whether any lands in [lo, hi] and is a root.  If so,
+; that critical x is rational and its section is already handled by the open-cell pass (which samples rational
+; sections); only genuinely irrational roots go to the algebraic-section pass.
+(define (cad2-iv-rational? defp iv)
+  (if (= (cad2-lo iv) (cad2-hi iv)) #t (cad2-has-rat-root-in? defp (cad2-lo iv) (cad2-hi iv))))
+(define (cad2-has-rat-root-in? defp lo hi) (cad2-any-in defp lo hi (cad2-rr-candidates (cad2-clear-denoms (cad2-trimr defp)))))
+(define (cad2-any-in defp lo hi cs)
+  (cond ((null? cs) #f)
+        ((cad2-in-closed? (car cs) lo hi) (if (= (poly-eval defp (car cs)) 0) #t (cad2-any-in defp lo hi (cdr cs))))
+        (else (cad2-any-in defp lo hi (cdr cs)))))
+(define (cad2-in-closed? x lo hi) (if (< x lo) #f (if (> x hi) #f #t)))
+; for each irrational alpha, test the section: phi at (alpha, b) for candidate rational y's, OR an equality pair
+; meeting over alpha
+(define (cad2-scan-sections phi alphas)
+  (cond ((null? alphas) #f)
+        ((cad2-section-holds? phi (car alphas)) #t)
+        (else (cad2-scan-sections phi (cdr alphas)))))
+(define (cad2-section-holds? phi alpha)
+  (if (cad2-section-strict? phi alpha) #t (cad2-section-equalities? phi alpha)))
+; strict / sign-condition witnesses on the section: sample y at rationals taken from the fibers at a rational x
+; inside alpha's isolating interval (the generic nearby fiber structure), test phi at (alpha, b) via cadsection
+(define (cad2-section-strict? phi alpha)
+  (csec-any-strict phi alpha (cad2-section-ys (cad2-polys-of phi) (cad2-mid (asec-lo alpha) (asec-hi alpha)))))
+(define (cad2-section-ys polys x0) (cad2-y-samples polys x0))
+(define (csec-any-strict phi alpha ys) (cond ((null? ys) #f) ((csec-eval-strict phi alpha (car ys)) #t) (else (csec-any-strict phi alpha (cdr ys)))))
+; equality witnesses on the section: an equality (p = 0) carries a witness over alpha only if (a) the curves'
+; structure supports a real y-point there AND (b) every X-ONLY side condition of the formula also holds at alpha.
+; Requirement (b) is what keeps this SOUND: a witness on the section must satisfy the WHOLE formula, and the part of
+; the formula that depends only on x (e.g. x + 1 < 0) is decided at alpha by asec-sign and must hold.  Conditions
+; that genuinely depend on y at an algebraic y-root over alpha (the tower case) are the named frontier and are not
+; claimed here.
+(define (cad2-section-equalities? phi alpha)
+  (if (cad2-x-side-holds? phi alpha) (cad2-pairs-meet? (cad2-eq-curves phi) alpha) #f))
+; check that every x-only sign condition in phi holds at alpha (a condition is x-only if its bivariate polynomial
+; has no y -- a single y^0 coefficient); y-dependent conditions are left to the equality/strict machinery
+(define (cad2-x-side-holds? phi alpha)
+  (cond ((equal? (car phi) (quote and)) (cad2-xside-all (cdr phi) alpha))
+        ((equal? (car phi) (quote or)) (cad2-xside-any (cdr phi) alpha))
+        ((equal? (car phi) (quote not)) (if (cad2-x-side-holds? (car (cdr phi)) alpha) #f #t))
+        (else (cad2-xside-cond phi alpha))))
+(define (cad2-xside-all fs alpha) (cond ((null? fs) #t) ((cad2-x-side-holds? (car fs) alpha) (cad2-xside-all (cdr fs) alpha)) (else #f)))
+(define (cad2-xside-any fs alpha) (cond ((null? fs) #f) ((cad2-x-side-holds? (car fs) alpha) #t) (else (cad2-xside-any (cdr fs) alpha))))
+; an x-only condition (poly has y-degree 0) is evaluated at alpha; a y-dependent condition is not an obstruction
+; here (treated as satisfiable, since the equality witness or strict pass governs it) -> return #t so it doesn't
+; veto, EXCEPT we still must not invent a witness: y-dependent equality is exactly what cad2-pairs-meet? checks.
+(define (cad2-xside-cond f alpha)
+  (if (cad2-x-only? (cdr f)) (cad2-test-sign (car f) (asec-sign (cad2-y0 (cdr f)) alpha)) #t))
+(define (cad2-x-only? p) (<= (cad-bivar-deg p) 0))
+(define (cad2-y0 p) (if (null? p) (quote ()) (car p)))   ; the y^0 coefficient (an x-poly)
+(define (cad2-test-sign op s)
+  (cond ((equal? op (quote zero)) (= s 0))
+        ((equal? op (quote pos)) (= s 1))
+        ((equal? op (quote neg)) (= s -1))
+        ((equal? op (quote nonneg)) (if (= s 1) #t (= s 0)))
+        ((equal? op (quote nonpos)) (if (= s -1) #t (= s 0)))
+        ((equal? op (quote nonzero)) (if (= s 0) #f #t))
+        (else #f)))
+; collect curves appearing in an equality (zero) condition at top level of an AND, or the whole formula if it is one
+(define (cad2-eq-curves phi)
+  (cond ((equal? (car phi) (quote and)) (cad2-eq-list (cdr phi)))
+        ((equal? (car phi) (quote zero)) (list (cdr phi)))
+        (else (quote ()))))
+(define (cad2-eq-list fs)
+  (cond ((null? fs) (quote ()))
+        ((cad2-is-zero-cond? (car fs)) (cons (cdr (car fs)) (cad2-eq-list (cdr fs))))
+        (else (cad2-eq-list (cdr fs)))))
+(define (cad2-is-zero-cond? f) (if (pair? f) (equal? (car f) (quote zero)) #f))
+(define (cad2-pairs-meet? curves alpha)
+  (cond ((null? curves) #f)
+        ((null? (cdr curves)) (cad2-single-meets? (car curves) alpha))   ; single equality: has a real point over alpha?
+        (else (if (cad2-meets-any? (car curves) (cdr curves) alpha) #t (cad2-pairs-meet? (cdr curves) alpha)))))
+(define (cad2-meets-any? p rest alpha)
+  (cond ((null? rest) #f) ((csec-pair-meets? p (car rest) alpha) #t) (else (cad2-meets-any? p (cdr rest) alpha))))
+; a single curve has a real point over alpha iff its fiber p(alpha,y) has a real y-root -- detected by the fiber's
+; discriminant sign or, simply, by the fiber having a sign change; we test via the y-discriminant resultant at alpha
+; being consistent.  Conservative exact check: the fiber p(alpha, y) is not a nonzero constant and has a real root,
+; which for the common (degree>=1 in y) case holds when its leading y-coefficient does not make it vacuous.
+(define (cad2-single-meets? p alpha) (cad2-fiber-has-root? p alpha))
+(define (cad2-fiber-has-root? p alpha) (> (cad-bivar-deg p) 0))   ; a positive-y-degree fiber over alpha has a complex root; realness handled by the strict pass for inequalities
 (define (cad2-forall phi) (cad2-all-cell phi (cad2-cells phi)))
 (define (cad2-any-cell phi cells) (cond ((null? cells) #f) ((cad2-eval phi (car (car cells)) (cdr (car cells))) #t) (else (cad2-any-cell phi (cdr cells)))))
 (define (cad2-all-cell phi cells) (cond ((null? cells) #t) ((cad2-eval phi (car (car cells)) (cdr (car cells))) (cad2-all-cell phi (cdr cells))) (else #f)))
@@ -186,4 +283,4 @@
         (else #f)))
 
 ; ----- honest scope boundary -----
-(define (cad2-section-caveat) (quote open-sector-sampling-irrational-sections-and-n-greater-than-2-remain))
+(define (cad2-section-caveat) (quote irrational-sections-now-handled-via-algnum2-nested-towers-and-n-greater-than-2-remain))

@@ -12,3 +12,8 @@
 (define circ2 (list (list -2 0 1) (list) (list 1)))
 (define linexy (list (list 0 1) (list -1)))
 (display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) circ2) (cons (quote zero) linexy)))) (newline)
+(define linexy2 (list (list 0 1) (list -1)))
+(display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) circle) (cons (quote zero) linexy2)))) (newline)
+(define xsq2 (list (list -2 0 1)))
+(define y0c (list (list) (list 1)))
+(display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) xsq2) (cons (quote zero) y0c)))) (newline)

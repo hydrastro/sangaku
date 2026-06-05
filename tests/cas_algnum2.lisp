@@ -1,0 +1,8 @@
+(import "cas/algnum2.lisp")
+(define s2 (asec-make (list -2 0 1) 1 2))
+(display (asec-sign (list -1 1) s2)) (display " ") (display (asec-sign (list 1 -1) s2)) (display " ") (display (asec-sign (list 3 -2) s2)) (display " ") (display (asec-sign (list -2 1) s2)) (newline)
+(display (asec-sign (list -2 0 1) s2)) (display " ") (display (asec-sign (list -3 0 1) s2)) (display " ") (display (asec-sign (list -1 0 1) s2)) (newline)
+(define phi (asec-make (list -1 -1 1) 1 2))
+(display (asec-sign (list -1 1) phi)) (display " ") (display (asec-sign (list 2 -1) phi)) (display " ") (display (asec-sign (list -1 -1 1) phi)) (display " ") (display (asec-sign (list -2 0 1) phi)) (newline)
+(define three (asec-make (list -3 1) 2 4))
+(display (asec-sign (list -5 1) three)) (display " ") (display (asec-rational? three)) (newline)
