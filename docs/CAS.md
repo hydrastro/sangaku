@@ -4435,3 +4435,20 @@ ascending half of CAD running in three variables over the full-dimensional cells
 lower-dimensional sections in 3-D (lifting the nbox algebraic sample points through every level) and the fully
 general n are the remaining frontier, named by cadlift-section-caveat; the foundation -- projection downward,
 algebraic sample points, lifting over full-dimensional cells -- is now in place.
+
+## General n: one recursive decider for any number of variables (cadgen.lisp)
+
+cad2d.lisp and cadlift.lisp hand-unrolled two and three variables; cadgen.lisp is the single RECURSIVE decider for
+ANY n.  It decides "exists x_1 ... exists x_n . phi" and its universal dual over the full-dimensional cells.  The
+recursion is on the outermost variable: at one variable, a univariate sign-condition decision; otherwise, choose
+rational sample values for the outer variable, SUBSTITUTE each (an exact Horner fold on the nested polynomial
+representation, lowering arity by one), and recurse on the (n-1)-variable family.  The tower is finite -- n
+variables give n levels of recursion -- which is exactly why the real decision problem is decidable; the cost is
+exponential in n (the unavoidable price of CAD), but the depth is bounded.  Every sample value is an exact rational,
+so a positive verdict is always correct, and the procedure is complete for full-dimensional witnesses: a solution
+set of full dimension has nonempty interior and so meets a sufficiently fine rational sample set.  It reproduces the
+one-, two-, and three-variable results and decides four-variable statements -- the open unit 4-ball nonempty, its
+shift empty, the universal nonnegativity of a sum of four squares -- the recursion running to depth four.  The
+exact treatment of lower-dimensional sections for general n (lifting the algebraic sample points of nbox.lisp
+through every level, as the two-variable decider does in full) is the remaining frontier, named by
+cadgen-section-caveat; over the full-dimensional cells this is a real, sound, exact decider for every n.

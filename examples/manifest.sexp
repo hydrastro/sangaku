@@ -12,3 +12,4 @@
 (example "403-real-algebraic-points.lisp" :expect pass)
 (example "404-n-dimensional-sample-points.lisp" :expect pass)
 (example "405-three-variable-lifting.lisp" :expect pass)
+(example "406-general-n-decision.lisp" :expect pass)
