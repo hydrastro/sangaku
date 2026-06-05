@@ -10,3 +10,5 @@
 (example "401-irrational-sections.lisp" :expect pass)
 (example "402-n-variable-projection.lisp" :expect pass)
 (example "403-real-algebraic-points.lisp" :expect pass)
+(example "404-n-dimensional-sample-points.lisp" :expect pass)
+(example "405-three-variable-lifting.lisp" :expect pass)

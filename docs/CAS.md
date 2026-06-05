@@ -4412,3 +4412,26 @@ with the irrational-section work, the two-variable real decider is now complete:
 sections, irrational sections, and the nested algebraic tower are all decided exactly.  The remaining frontier is
 the recursion to n > 2 variables -- the full-dimensional lifting that stacks such algebraic sample points through
 every projection level.
+
+## n-dimensional algebraic sample points and three-variable lifting (nbox.lisp, cadlift.lisp)
+
+Two modules carry the decomposition past two variables.
+
+N-DIMENSIONAL ALGEBRAIC SAMPLE POINTS (nbox.lisp).  A point in R^n with all-algebraic coordinates is represented by
+a rational isolating box, and the exact sign of any n-variate polynomial at it is computed by interval arithmetic
+over the box (nested Horner), refining the widest coordinate until the sign separates from zero.  This is what a
+lifted CAD sample point IS, the same representation for every dimension, and it needs no symbolic algebraic-tower
+arithmetic -- the tower Q(alpha_1)...(alpha_n) is never built; the point is just a box that is refined.  The levels
+are finite: n variables give a projection/lifting tower of fixed height n.  Verified in three dimensions on a point
+of the unit sphere with two rational coordinates and one irrational.
+
+THREE-VARIABLE LIFTING (cadlift.lisp).  The lifting phase, carried one dimension past the two-variable decider: to
+decide a three-variable statement over the full-dimensional cells, sample the x-axis (sectors), substitute each
+x = a to a (y,z)-fiber and sample its y-axis, substitute each y = b to a z-fiber and sample the z-line, and evaluate
+the formula at (a, b, c).  Each lower coordinate is fixed before the next is sampled -- the cylindrical condition --
+and every coordinate is an exact rational sector sample.  It decides the open unit ball nonempty, x^2+y^2+z^2+1 < 0
+empty, the universals over R^3, and the bounded positive region {x>0, y>0, z>0, x+y+z<2} nonempty.  This is the
+ascending half of CAD running in three variables over the full-dimensional cells.  The complete treatment of
+lower-dimensional sections in 3-D (lifting the nbox algebraic sample points through every level) and the fully
+general n are the remaining frontier, named by cadlift-section-caveat; the foundation -- projection downward,
+algebraic sample points, lifting over full-dimensional cells -- is now in place.
