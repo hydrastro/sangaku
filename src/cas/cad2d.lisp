@@ -219,38 +219,17 @@
   (csec-any-strict phi alpha (cad2-section-ys (cad2-polys-of phi) (cad2-mid (asec-lo alpha) (asec-hi alpha)))))
 (define (cad2-section-ys polys x0) (cad2-y-samples polys x0))
 (define (csec-any-strict phi alpha ys) (cond ((null? ys) #f) ((csec-eval-strict phi alpha (car ys)) #t) (else (csec-any-strict phi alpha (cdr ys)))))
-; equality witnesses on the section: an equality (p = 0) carries a witness over alpha only if (a) the curves'
-; structure supports a real y-point there AND (b) every X-ONLY side condition of the formula also holds at alpha.
-; Requirement (b) is what keeps this SOUND: a witness on the section must satisfy the WHOLE formula, and the part of
-; the formula that depends only on x (e.g. x + 1 < 0) is decided at alpha by asec-sign and must hold.  Conditions
-; that genuinely depend on y at an algebraic y-root over alpha (the tower case) are the named frontier and are not
-; claimed here.
+; equality witnesses on the section: build the algebraic INTERSECTION POINTS of the equality curves over alpha and
+; evaluate the WHOLE formula at each (via algpoint, exact at the nested-tower point Q(alpha)(beta)).  This is sound
+; and complete for the conjunctive-equality case: it no longer merely checks that the curves meet, it checks that
+; the full formula -- including inequality side conditions -- holds at the actual algebraic intersection.
 (define (cad2-section-equalities? phi alpha)
-  (if (cad2-x-side-holds? phi alpha) (cad2-pairs-meet? (cad2-eq-curves phi) alpha) #f))
-; check that every x-only sign condition in phi holds at alpha (a condition is x-only if its bivariate polynomial
-; has no y -- a single y^0 coefficient); y-dependent conditions are left to the equality/strict machinery
-(define (cad2-x-side-holds? phi alpha)
-  (cond ((equal? (car phi) (quote and)) (cad2-xside-all (cdr phi) alpha))
-        ((equal? (car phi) (quote or)) (cad2-xside-any (cdr phi) alpha))
-        ((equal? (car phi) (quote not)) (if (cad2-x-side-holds? (car (cdr phi)) alpha) #f #t))
-        (else (cad2-xside-cond phi alpha))))
-(define (cad2-xside-all fs alpha) (cond ((null? fs) #t) ((cad2-x-side-holds? (car fs) alpha) (cad2-xside-all (cdr fs) alpha)) (else #f)))
-(define (cad2-xside-any fs alpha) (cond ((null? fs) #f) ((cad2-x-side-holds? (car fs) alpha) #t) (else (cad2-xside-any (cdr fs) alpha))))
-; an x-only condition (poly has y-degree 0) is evaluated at alpha; a y-dependent condition is not an obstruction
-; here (treated as satisfiable, since the equality witness or strict pass governs it) -> return #t so it doesn't
-; veto, EXCEPT we still must not invent a witness: y-dependent equality is exactly what cad2-pairs-meet? checks.
-(define (cad2-xside-cond f alpha)
-  (if (cad2-x-only? (cdr f)) (cad2-test-sign (car f) (asec-sign (cad2-y0 (cdr f)) alpha)) #t))
-(define (cad2-x-only? p) (<= (cad-bivar-deg p) 0))
-(define (cad2-y0 p) (if (null? p) (quote ()) (car p)))   ; the y^0 coefficient (an x-poly)
-(define (cad2-test-sign op s)
-  (cond ((equal? op (quote zero)) (= s 0))
-        ((equal? op (quote pos)) (= s 1))
-        ((equal? op (quote neg)) (= s -1))
-        ((equal? op (quote nonneg)) (if (= s 1) #t (= s 0)))
-        ((equal? op (quote nonpos)) (if (= s -1) #t (= s 0)))
-        ((equal? op (quote nonzero)) (if (= s 0) #f #t))
-        (else #f)))
+  (cad2-eq-points-decide phi (cad2-eq-curves phi) (asec-lo alpha) (asec-hi alpha)))
+(define (cad2-eq-points-decide phi curves axlo axhi)
+  (if (cad2-two-or-more? curves)
+      (csec-decide-eq-section phi (car curves) (car (cdr curves)) axlo axhi)
+      #f))                                              ; a lone equality with no second curve: governed by strict pass
+(define (cad2-two-or-more? l) (if (null? l) #f (if (null? (cdr l)) #f #t)))
 ; collect curves appearing in an equality (zero) condition at top level of an AND, or the whole formula if it is one
 (define (cad2-eq-curves phi)
   (cond ((equal? (car phi) (quote and)) (cad2-eq-list (cdr phi)))

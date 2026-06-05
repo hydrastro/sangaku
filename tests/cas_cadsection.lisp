@@ -8,3 +8,8 @@
 (display (csec-sign-on-section linexy alpha 0)) (newline)
 (define xpos (list (list 0 1)))
 (display (csec-eval-strict (list (quote and) (cons (quote pos) xpos) (cons (quote neg) circle)) alpha 0)) (newline)
+(define An (list (list -2 0 1)))
+(define Bn (list (list 0 -1) (list) (list 1)))
+(define xmyn (list (list 0 1) (list -1)))
+(display (csec-decide-eq-section (list (quote and) (cons (quote zero) An) (cons (quote zero) Bn) (cons (quote neg) xmyn)) An Bn (/ 14 10) (/ 15 10))) (newline)
+(display (csec-decide-eq-section (list (quote and) (cons (quote zero) An) (cons (quote zero) Bn) (cons (quote pos) xmyn)) An Bn (/ 14 10) (/ 15 10))) (newline)

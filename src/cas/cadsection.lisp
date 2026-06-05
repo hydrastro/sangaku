@@ -48,6 +48,7 @@
 (import "cas/algnum2.lisp")
 (import "cas/cadproj.lisp")
 (import "cas/poly.lisp")
+(import "cas/algpoint.lisp")
 
 ; ----- substitute a rational y = b into a bivariate polynomial, leaving a polynomial in x -----
 (define (csec-subst-y p b) (csec-subst-go p b 1 (quote ())))
@@ -82,3 +83,62 @@
 
 ; ----- honest scope boundary -----
 (define (csec-tower-caveat) (quote nested-algebraic-over-algebraic-y-ordering-is-the-deep-frontier))
+
+; ----- nested-tower section decision: evaluate the FULL formula at the algebraic intersection points of the
+; equality curves over a critical x.  When two equality-constrained curves A=0, B=0 meet over x=alpha, the meeting
+; is at algebraic points (alpha, beta) whose y-coordinate beta is algebraic over Q(alpha); to decide the whole
+; formula there (including inequalities, which the pair-meeting test alone cannot evaluate) we build each such
+; algebraic point with algpoint.lisp and evaluate every sign condition at it exactly.  This closes the genuine
+; Q(alpha)(beta) gap: a formula like "x^2 = 2 and y^2 = x and x - y < 0" is now decided correctly (false: at the
+; intersection x - y is positive), where the meeting test alone would wrongly accept it.
+;
+; csec-eval-phi-at-point phi pt -> #t iff every sign condition of phi holds at the algebraic point pt (apt rep)
+; csec-section-points A B axlo axhi -> the algebraic intersection points of A=0, B=0 with x in (axlo, axhi): for
+;   each real y-root of the fiber over a rational x in the x-interval, an apt point with an isolating box
+; csec-decide-eq-section phi A B axlo axhi -> #t iff phi holds at some intersection point of A,B over the x-interval
+
+(define (csec-eval-phi-at-point phi pt)
+  (cond ((equal? (car phi) (quote and)) (csec-pt-all (cdr phi) pt))
+        ((equal? (car phi) (quote or)) (csec-pt-any (cdr phi) pt))
+        ((equal? (car phi) (quote not)) (if (csec-eval-phi-at-point (car (cdr phi)) pt) #f #t))
+        (else (csec-pt-test (car phi) (apt-sign (cdr phi) pt)))))
+(define (csec-pt-all fs pt) (cond ((null? fs) #t) ((csec-eval-phi-at-point (car fs) pt) (csec-pt-all (cdr fs) pt)) (else #f)))
+(define (csec-pt-any fs pt) (cond ((null? fs) #f) ((csec-eval-phi-at-point (car fs) pt) #t) (else (csec-pt-any (cdr fs) pt))))
+(define (csec-pt-test op s)
+  (cond ((equal? op (quote zero)) (= s 0))
+        ((equal? op (quote pos)) (= s 1))
+        ((equal? op (quote neg)) (= s -1))
+        ((equal? op (quote nonneg)) (if (= s 1) #t (= s 0)))
+        ((equal? op (quote nonpos)) (if (= s -1) #t (= s 0)))
+        ((equal? op (quote nonzero)) (if (= s 0) #f #t))
+        (else #f)))
+
+; build the algebraic intersection points of A=0, B=0 with x in (axlo, axhi): isolate the y-roots of whichever
+; defining curve actually involves y (a curve constant in y, like x^2 - 2, contributes no y-roots), at a rational x
+; inside the x-interval, and for each y-root make an apt point with that y-isolating box
+(define (csec-section-points A B axlo axhi)
+  (csec-pts-from A B axlo axhi (csec-yroots (csec-y-curve A B) (csec-midpt axlo axhi))))
+(define (csec-y-curve A B) (if (> (csec-ydeg A) 0) A B))
+(define (csec-ydeg p) (- (csec-ylen p) 1))
+(define (csec-ylen p) (csec-yl p (csec-llen p)))
+(define (csec-llen l) (if (null? l) 0 (+ 1 (csec-llen (cdr l)))))
+(define (csec-yl p k) (cond ((= k 0) 0) ((csec-zc (csec-ynth p (- k 1))) (csec-yl p (- k 1))) (else k)))
+(define (csec-ynth l k) (if (= k 0) (car l) (csec-ynth (cdr l) (- k 1))))
+(define (csec-zc c) (cond ((null? c) #t) ((= (car c) 0) (csec-zc (cdr c))) (else #f)))
+(define (csec-midpt a b) (/ (+ a b) 2))
+(define (csec-yroots curve xc) (isolate-roots (csec-cleard (csec-fiber curve xc))))
+(define (csec-fiber curve xc) (csec-fiber-go curve xc))
+(define (csec-fiber-go curve xc) (if (null? curve) (quote ()) (cons (poly-eval (car curve) xc) (csec-fiber-go (cdr curve) xc))))
+; clear denominators for sturm (integer coeffs)
+(define (csec-cleard p) (csec-scale p (csec-lcd p)))
+(define (csec-scale p m) (if (null? p) (quote ()) (cons (* (car p) m) (csec-scale (cdr p) m))))
+(define (csec-lcd p) (csec-lcd-go p 1))
+(define (csec-lcd-go p acc) (if (null? p) acc (csec-lcd-go (cdr p) (csec-lcm acc (denominator (car p))))))
+(define (csec-lcm a b) (/ (* a b) (csec-gcd a b)))
+(define (csec-gcd a b) (if (= b 0) a (csec-gcd b (remainder a b))))
+(define (csec-pts-from A B axlo axhi yivs)
+  (if (null? yivs) (quote ())
+      (cons (apt-make A B axlo axhi (car (car yivs)) (car (cdr (car yivs)))) (csec-pts-from A B axlo axhi (cdr yivs)))))
+
+(define (csec-decide-eq-section phi A B axlo axhi) (csec-scan-pts phi (csec-section-points A B axlo axhi)))
+(define (csec-scan-pts phi pts) (cond ((null? pts) #f) ((csec-eval-phi-at-point phi (car pts)) #t) (else (csec-scan-pts phi (cdr pts)))))

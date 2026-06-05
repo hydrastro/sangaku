@@ -4391,3 +4391,24 @@ including irrational sections); for n >= 3 this module is the exact projection b
 decider.  The n-dimensional algebraic-tower LIFTING -- stacking sample points with coordinates in Q(alpha_1)(alpha_2)
 ... through every level -- is the deep frontier, the part a complete real-quantifier-elimination engine is truly
 made of, and cadn-lifting-caveat names it.
+
+## The nested tower Q(alpha)(beta): the two-variable decider made complete (algpoint.lisp)
+
+The last boundary of the two-variable decider was the case of an algebraic y-root beta over an algebraic x = alpha
+-- the tower Q(alpha)(beta) -- where deciding the formula needs the exact sign of a polynomial at a point BOTH of
+whose coordinates are irrational.  algpoint.lisp supplies it.  A real algebraic point in the plane is the unique
+common real solution of a defining pair A(x,y)=0, B(x,y)=0, isolated by a rational box; the sign of any bivariate g
+at it is computed by interval arithmetic over the box, refining (bisect the wider side, keep the half still
+bracketing the root) until g is sign-definite, with vanishing decided algebraically (g vanishes iff alpha is a
+common root of the eliminants, with the special case of a y-constant curve c(x)=0 handled by testing c(alpha)
+directly).  Everything is exact rational arithmetic -- no floating point, no algebraic-field arithmetic.
+
+cadsection.lisp uses this to evaluate the WHOLE formula at the algebraic intersection points of the equality curves
+over a critical x, and cad2d.lisp's equality-section pass now calls that instead of a mere "do the curves meet"
+test.  The difference is real and is a soundness gain: the formula x^2 = 2 and y^2 = x and x - y < 0 is now decided
+FALSE (at the intersection x = sqrt(2), y = 2^(1/4) the value x - y is positive, about 0.225), where the
+meeting-only test would have wrongly accepted it; and x^2 = 2 and y^2 = x and x - y > 0 is decided TRUE.  Together
+with the irrational-section work, the two-variable real decider is now complete: full-dimensional cells, rational
+sections, irrational sections, and the nested algebraic tower are all decided exactly.  The remaining frontier is
+the recursion to n > 2 variables -- the full-dimensional lifting that stacks such algebraic sample points through
+every projection level.

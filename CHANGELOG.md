@@ -1,3 +1,12 @@
+# CAS frontier: the nested tower Q(alpha)(beta) -- the two-variable decider is now COMPLETE and sound
+
+- Added `src/cas/algpoint.lisp`: REAL ALGEBRAIC POINTS in the plane -- a point (alpha, beta) that is the unique common real solution of a defining pair A(x,y)=0, B(x,y)=0, isolated by a rational BOX, with the EXACT sign of any bivariate polynomial at it by interval arithmetic over the refining box. Vanishing is decided algebraically (alpha a common root of the eliminants; y-constant curves c(x)=0 tested via c(alpha) directly). Pure rational arithmetic -- no floats, no algebraic-field arithmetic. This is the nested-tower primitive Q(alpha)(beta) and exactly what a lifted CAD sample point is. Example 403 + golden cas_algpoint. Verified on (1/sqrt2, 1/sqrt2): exact signs of x, y, x+y-1, 2xy-1 (=0), the defining curves (=0), etc.
+- Extended `src/cas/cadsection.lisp`: evaluate the WHOLE formula at the algebraic intersection points of the equality curves over a critical x (csec-decide-eq-section), via algpoint -- including inequality side conditions at the nested-tower point. Golden cas_cadsection extended.
+- Rewired `src/cas/cad2d.lisp`'s equality-section pass to use the full-formula-at-intersection decision instead of a mere curve-meeting test. This is a SOUNDNESS GAIN: x^2=2 AND y^2=x AND x-y<0 is now correctly FALSE (at x=sqrt2, y=2^1/4, x-y>0), where the old meeting-only test wrongly accepted it; x-y>0 is correctly TRUE. The existing cad2d golden is UNCHANGED (the fix only corrects/adds verdicts none of whose golden cases were affected); golden extended with the nested-tower cases.
+- Caught real bugs by isolation: y-refinement and y-root isolation must use the y-BEARING defining curve (a curve constant in y like x^2-2 has no y-roots); apt-vanishes? must special-case y-constant curves (their resultant degenerates) by testing the x-content at alpha directly.
+- MILESTONE: the two-variable real decider is now COMPLETE -- full-dimensional cells, rational sections, irrational sections, AND the nested algebraic tower Q(alpha)(beta), all decided exactly. The remaining frontier is the recursion to n>2 (full-dimensional lifting stacking algebraic sample points through every level).
+- Zero regressions; structure and lint clean.
+
 # CAS frontier: exact irrational sections (2-var CAD now complete) + the n-variable projection tower
 
 REAL ALGEBRAIC NUMBERS

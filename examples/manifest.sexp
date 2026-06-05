@@ -9,3 +9,4 @@
 (example "400-real-algebraic-numbers.lisp" :expect pass)
 (example "401-irrational-sections.lisp" :expect pass)
 (example "402-n-variable-projection.lisp" :expect pass)
+(example "403-real-algebraic-points.lisp" :expect pass)

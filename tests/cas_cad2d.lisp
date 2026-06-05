@@ -17,3 +17,8 @@
 (define xsq2 (list (list -2 0 1)))
 (define y0c (list (list) (list 1)))
 (display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) xsq2) (cons (quote zero) y0c)))) (newline)
+(define xsq2t (list (list -2 0 1)))
+(define parabt (list (list 0 -1) (list) (list 1)))
+(define xmyt (list (list 0 1) (list -1)))
+(display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) xsq2t) (cons (quote zero) parabt) (cons (quote neg) xmyt)))) (newline)
+(display (cad2-decide (quote exists) (list (quote and) (cons (quote zero) xsq2t) (cons (quote zero) parabt) (cons (quote pos) xmyt)))) (newline)
