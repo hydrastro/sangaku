@@ -4452,3 +4452,82 @@ shift empty, the universal nonnegativity of a sum of four squares -- the recursi
 exact treatment of lower-dimensional sections for general n (lifting the algebraic sample points of nbox.lisp
 through every level, as the two-variable decider does in full) is the remaining frontier, named by
 cadgen-section-caveat; over the full-dimensional cells this is a real, sound, exact decider for every n.
+
+## General-n sections: the final ridge (cadsecn.lisp)
+
+cadgen.lisp decides every n over the full-dimensional cells; cadsecn.lisp reaches the witnesses confined to a
+lower-dimensional SECTION, where polynomials vanish and the coordinates are algebraic (possibly irrational) numbers
+in a tower.  An n-box's coupled refinement cannot isolate a zero-dimensional point -- bisecting one coordinate
+cannot be validated while the others are wide, so the defining system's interval straddles zero in both halves and
+refinement never converges.  The exact route is TRIANGULAR: eliminate variables to pin the base coordinate as the
+root of a univariate polynomial (a real algebraic number, algnum2.lisp), then propagate the system's relations to
+express every further coordinate over the ones already fixed; flattening the tower onto the base turns any
+polynomial into a univariate polynomial in the base coordinate, whose exact sign at the algebraic base value
+decides the condition.  All rational arithmetic, fully irrational witnesses.  Verified on the zero-dimensional
+point x = y = z = 1/sqrt(3) (cut out by x^2+y^2+z^2 = 1, x = y, y = z -- which full-dimensional sampling can never
+reach): x > 0, the sphere vanishes, x - y = 0, x + y + z - 2 < 0 (since sqrt(3) < 2), and the whole existential
+system holds; and on the four-dimensional diagonal x_1 = ... = x_4 = 1/2.  This is the section analogue, for any n,
+of the two-variable decider's algebraic-point machinery.  The fully general non-triangular multi-algebraic tower --
+an arbitrary equality variety needing iterated resultant back-substitution at every level -- is the deepest
+remaining work, named by cadsecn-general-caveat.
+
+With cadsecn the climb stands as: univariate real QE (complete); the two-variable decider complete (full cells,
+rational and irrational sections, the nested tower Q(alpha)(beta)); the projection tower for all n; algebraic sample
+points in two and n dimensions; three-variable lifting and the general-n decider over full-dimensional cells; and
+now exact section witnesses for general n in the triangular case.  The single remaining frontier is the general
+multi-algebraic section tower for arbitrary n -- the part a complete industrial real-QE engine spends years
+engineering.
+
+## The general multi-algebraic tower: nested radicals and iterated extensions (cadtower.lisp)
+
+cadsecn.lisp decided explicit triangular sections (x_k a polynomial in x_{k-1}); cadtower.lisp decides the IMPLICIT
+tower, where each coordinate is a genuine algebraic number over the field below -- x_k a ROOT of a polynomial whose
+coefficients are polynomials in the lower coordinates, the structure of nested radicals (sqrt(2) -> 2^(1/4) ->
+2^(1/8)) and, generally, of a regular chain.  It is algpoint.lisp's two-level construction generalized to any
+height.  The chain is simple (each defining polynomial relates consecutive coordinates, bivariate in cadproj's
+form).  The sign of a polynomial at the tower point is decided by two exact mechanisms: VANISHING by reducing the
+polynomial down the chain with iterated resultants to a univariate base polynomial, tested at the base algebraic
+number (algpoint's resultant test, iterated down a tower of any height -- the inter-level representations are
+matched by lifting each univariate resultant back to bivariate form before the next elimination); and the NONZERO
+sign by interval arithmetic over a box refined TOP-DOWN, the base tightened first and each fiber isolated over the
+now-tight coordinate below -- the order that makes the box converge where an n-box's coupled refinement cannot
+isolate a zero-dimensional point.  A section decider (cadtower-exists-chain) builds the witness points from a chain
+by isolating each level's root and tests extra sign conditions at them, so existential statements over such a
+section are decided: x^2 = 2 and y^2 = x and y > 1 is true (y = 2^(1/4) is about 1.19), y > 2 is false, and x - y > 0
+is true (sqrt(2) > 2^(1/4)).  Verified on the height-three radical tower x = sqrt(2), y = 2^(1/4), z = 2^(1/8): the
+radical identities reduce to zero while the coordinate comparisons are exact.  The fully general regular chain,
+whose defining polynomials couple all lower coordinates at once (needing multi-resultant elimination rather than
+iterated bivariate steps), is the deepest residual generality, named by cadtower-chain-caveat.
+
+The climb, complete picture: univariate real QE; the two-variable decider complete; the projection tower for all n;
+algebraic sample points in two and n dimensions; three-variable lifting; the general-n decider over full-dimensional
+cells; exact general-n triangular sections; and now the general multi-algebraic (simple) tower -- nested radicals
+and iterated extensions of any height, decided exactly.  The single residual frontier is the fully general regular
+chain coupling all coordinates at once -- the last structural generality of a complete real-QE engine.
+
+## The general regular chain, completed: coupled defining polynomials (cadrc.lisp)
+
+cadtower.lisp decided the simple chain (each defining polynomial relating consecutive coordinates); cadrc.lisp
+decides the GENERAL regular chain, whose defining polynomials may couple ALL lower coordinates at once -- for
+instance z = x + y, depending on two earlier coordinates simultaneously -- the form a regular chain / triangular
+decomposition actually takes, and the last structural generality of the cylindrical-decomposition climb.  VANISHING
+is decided by reducing the target polynomial down the chain with the MULTIVARIATE resultant (cadnd's Sylvester
+determinant over the mpoly coefficient ring): eliminate the top variable between its defining polynomial and the
+target, regroup the resulting mpoly for the next variable down (the inter-level plumbing -- a resultant leaves an
+mpoly in all remaining variables, re-presented as a univariate-over-mpoly in the next variable by truncating the
+eliminated exponent positions so the arity matches the next level), continue to a univariate base polynomial, and
+test it at the base algebraic number.  The NONZERO sign is read by interval arithmetic over a box refined TOP-DOWN:
+the base tightened first with its own bisection, then each coordinate's interval bisected and the half kept on which
+its defining polynomial, evaluated over the now-tighter lower intervals, still straddles zero -- coupled fibers
+isolate because the lower coordinates are tightened first.  Verified on the coupled chain x^2 - 2, y^2 - x, z - x - y
+(so x = sqrt(2), y = 2^(1/4), z = sqrt(2) + 2^(1/4)): z - x - y and 2(z - x - y) and (z - x)^2 - x all reduce to zero
+(the last only because z - x = y and y^2 = x, a genuinely coupled cancellation), while z > 0, z - 2 > 0, z - 3 < 0
+are decided exactly.  Both halves -- vanishing and nonzero sign -- are now complete; with cadrc the cylindrical
+climb has reached its last structural generality, the algebraic core a complete real-quantifier-elimination engine
+spends its heaviest effort on.
+
+A comparison of sangaku against the established systems (Mathematica, Maple, QEPCAD B, Redlog, SymPy) is given in
+docs/cas-comparison.svg.  The honest summary: the established systems are faster, broader, and complete at a scale
+sangaku does not attempt, and have decades of hardening; sangaku's distinguishing axis is verifiability -- every
+decision emits a machine-checkable certificate reducible to rational arithmetic, it is built from scratch in Lisp
+with no external CAS dependency, and its source is fully inspectable, so the trust chain is the source itself.

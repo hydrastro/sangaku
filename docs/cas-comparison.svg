@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000" font-family="Georgia, 'Times New Roman', serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1614"/>
+      <stop offset="1" stop-color="#0f0c0b"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8c87a"/>
+      <stop offset="1" stop-color="#b8923f"/>
+    </linearGradient>
+    <linearGradient id="sangakuCol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3f33"/>
+      <stop offset="1" stop-color="#1c2b23"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="0.4"/></filter>
+  </defs>
+
+  <rect width="1400" height="1000" fill="url(#bg)"/>
+  <!-- subtle grid texture -->
+  <g stroke="#ffffff" stroke-opacity="0.025" stroke-width="1">
+    <line x1="0" y1="250" x2="1400" y2="250"/>
+    <line x1="0" y1="500" x2="1400" y2="500"/>
+    <line x1="0" y1="750" x2="1400" y2="750"/>
+  </g>
+
+  <!-- Title block -->
+  <text x="70" y="78" fill="#f3ead4" font-size="40" font-style="italic" letter-spacing="1">sangaku</text>
+  <text x="70" y="110" fill="#c9a85c" font-size="19" letter-spacing="3">A PROOF-CARRYING COMPUTER ALGEBRA SYSTEM — IN CONTEXT</text>
+  <text x="70" y="138" fill="#8c8278" font-size="15.5" font-style="italic">Where a from-scratch, verifiable CAS stands beside the established systems. Honest about both its edge and its limits.</text>
+  <line x1="70" y1="156" x2="1330" y2="156" stroke="#c9a85c" stroke-opacity="0.4" stroke-width="1.5"/>
+
+  <!-- ============ Capability matrix ============ -->
+  <text x="70" y="196" fill="#e8c87a" font-size="17" letter-spacing="2">CAPABILITY &amp; CHARACTER MATRIX</text>
+
+  <!-- column headers -->
+  <g font-size="14.5" fill="#d8cdbb" text-anchor="middle">
+    <text x="690" y="232" font-style="italic" font-size="16">sangaku</text>
+    <text x="838" y="232">Mathematica</text>
+    <text x="968" y="232">Maple</text>
+    <text x="1086" y="232">QEPCAD&#160;B</text>
+    <text x="1204" y="232">Redlog</text>
+    <text x="1306" y="232">SymPy</text>
+  </g>
+  <!-- highlight sangaku column -->
+  <rect x="638" y="240" width="104" height="430" rx="6" fill="url(#sangakuCol)" stroke="#3f6b52" stroke-width="1"/>
+
+  <!-- row labels and dots. Helper legend at bottom. -->
+  <g font-size="14.5" fill="#cabfa d" >
+    <text x="70" y="270" fill="#c8bda9">Real quantifier elimination / CAD</text>
+    <text x="70" y="312" fill="#c8bda9">Completeness at scale (many vars)</text>
+    <text x="70" y="354" fill="#c8bda9">Raw performance / speed</text>
+    <text x="70" y="396" fill="#c8bda9">Breadth (calculus, number theory, …)</text>
+    <text x="70" y="438" fill="#c8bda9">Machine-checkable proof objects</text>
+    <text x="70" y="480" fill="#c8bda9">Built from scratch, no CAS deps</text>
+    <text x="70" y="522" fill="#c8bda9">Source open &amp; fully inspectable</text>
+    <text x="70" y="564" fill="#c8bda9">Exact rational / algebraic arithmetic</text>
+    <text x="70" y="606" fill="#c8bda9">Free of cost</text>
+    <text x="70" y="648" fill="#c8bda9">Maturity / decades of hardening</text>
+  </g>
+
+  <!-- dot grid: columns at x = 690,838,968,1086,1204,1306 ; rows at y = 265..643 step 42 -->
+  <!-- legend: full gold disc = strong, half = partial, hollow = weak/none -->
+  <g>
+    <!-- ROW 1 Real QE/CAD: sangaku partial(rising), MMA full, Maple full, QEPCAD full, Redlog full, SymPy partial -->
+    <g transform="translate(0,265)">
+      <circle cx="690" cy="0" r="9" fill="none" stroke="#7fae8e" stroke-width="2.5"/><path d="M690 -9 A9 9 0 0 1 690 9 Z" fill="#7fae8e"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1306 -9 A9 9 0 0 1 1306 9 Z" fill="#b8923f"/>
+    </g>
+    <!-- ROW 2 Completeness at scale: sangaku weak, others full except SymPy partial -->
+    <g transform="translate(0,307)">
+      <circle cx="690" cy="0" r="9" fill="none" stroke="#7fae8e" stroke-width="2.5"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+    </g>
+    <!-- ROW 3 Performance: sangaku weak, MMA/Maple full, QEPCAD full, Redlog full, SymPy partial -->
+    <g transform="translate(0,349)">
+      <circle cx="690" cy="0" r="9" fill="none" stroke="#7fae8e" stroke-width="2.5"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1306 -9 A9 9 0 0 1 1306 9 Z" fill="#b8923f"/>
+    </g>
+    <!-- ROW 4 Breadth: sangaku partial (Risch+CAD+more, but not universal), MMA full, Maple full, QEPCAD weak(QE only), Redlog partial, SymPy full -->
+    <g transform="translate(0,391)">
+      <circle cx="690" cy="0" r="9" fill="none" stroke="#7fae8e" stroke-width="2.5"/><path d="M690 -9 A9 9 0 0 1 690 9 Z" fill="#7fae8e"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1204" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1204 -9 A9 9 0 0 1 1204 9 Z" fill="#b8923f"/>
+      <circle cx="1306" cy="0" r="9" fill="#e8c87a"/>
+    </g>
+    <!-- ROW 5 Machine-checkable proof objects: sangaku FULL (its signature), all others weak/none -->
+    <g transform="translate(0,433)">
+      <circle cx="690" cy="0" r="11" fill="#8fd6a6"/><circle cx="690" cy="0" r="11" fill="none" stroke="#d8f3e0" stroke-width="1.2"/>
+      <circle cx="838" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="968" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1086" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1204" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1306" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+    </g>
+    <!-- ROW 6 Built from scratch no deps: sangaku FULL, MMA/Maple no(proprietary kernels), QEPCAD partial(SACLIB), Redlog (on Reduce), SymPy partial -->
+    <g transform="translate(0,475)">
+      <circle cx="690" cy="0" r="11" fill="#8fd6a6"/><circle cx="690" cy="0" r="11" fill="none" stroke="#d8f3e0" stroke-width="1.2"/>
+      <circle cx="838" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="968" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1086" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1086 -9 A9 9 0 0 1 1086 9 Z" fill="#b8923f"/>
+      <circle cx="1204" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1204 -9 A9 9 0 0 1 1204 9 Z" fill="#b8923f"/>
+      <circle cx="1306" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/><path d="M1306 -9 A9 9 0 0 1 1306 9 Z" fill="#b8923f"/>
+    </g>
+    <!-- ROW 7 Open & inspectable: sangaku full, MMA none, Maple none, QEPCAD full, Redlog full, SymPy full -->
+    <g transform="translate(0,517)">
+      <circle cx="690" cy="0" r="9" fill="#8fd6a6"/>
+      <circle cx="838" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="968" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="#e8c87a"/>
+    </g>
+    <!-- ROW 8 Exact arithmetic: all full (it's table stakes for these) -->
+    <g transform="translate(0,559)">
+      <circle cx="690" cy="0" r="9" fill="#8fd6a6"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="#e8c87a"/>
+    </g>
+    <!-- ROW 9 Free of cost: sangaku yes, MMA no, Maple no, QEPCAD yes, Redlog yes, SymPy yes -->
+    <g transform="translate(0,601)">
+      <circle cx="690" cy="0" r="9" fill="#8fd6a6"/>
+      <circle cx="838" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="968" cy="0" r="9" fill="none" stroke="#b8923f" stroke-width="2.5"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="#e8c87a"/>
+    </g>
+    <!-- ROW 10 Maturity: sangaku weak(new), all others full/decades, SymPy full -->
+    <g transform="translate(0,643)">
+      <circle cx="690" cy="0" r="9" fill="none" stroke="#7fae8e" stroke-width="2.5"/>
+      <circle cx="838" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="968" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1086" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1204" cy="0" r="9" fill="#e8c87a"/>
+      <circle cx="1306" cy="0" r="9" fill="#e8c87a"/>
+    </g>
+  </g>
+
+  <!-- matrix legend -->
+  <g transform="translate(70,690)" font-size="13.5" fill="#9a8f7e">
+    <circle cx="8" cy="-4" r="8" fill="#e8c87a"/><text x="24" y="0">strong / yes</text>
+    <circle cx="150" cy="-4" r="8" fill="none" stroke="#b8923f" stroke-width="2.3"/><path d="M150 -12 A8 8 0 0 1 150 4 Z" fill="#b8923f"/><text x="166" y="0">partial</text>
+    <circle cx="270" cy="-4" r="8" fill="none" stroke="#b8923f" stroke-width="2.3"/><text x="286" y="0">weak / none</text>
+    <circle cx="430" cy="-4" r="9" fill="#8fd6a6"/><text x="448" y="0" fill="#bfe6cc">sangaku distinctive strength</text>
+  </g>
+
+  <!-- ============ Positioning statement (left) and the climb (right) ============ -->
+  <line x1="70" y1="726" x2="1330" y2="726" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1.2"/>
+
+  <!-- left: what sets it apart -->
+  <text x="70" y="762" fill="#e8c87a" font-size="16" letter-spacing="1.5">THE DISTINGUISHING AXIS — VERIFIABILITY</text>
+  <g font-size="14" fill="#bcb1a0">
+    <text x="70" y="790">The established systems are faster, broader, and complete at a scale</text>
+    <text x="70" y="811">sangaku does not attempt. Their kernels, however, are closed or vast:</text>
+    <text x="70" y="832">a result is trusted because the system is trusted.</text>
+    <text x="70" y="862" fill="#dfeede">sangaku inverts this. Every decision emits a checkable certificate —</text>
+    <text x="70" y="883" fill="#dfeede">a Sturm sign sequence, a Sylvester determinant, an isolating box,</text>
+    <text x="70" y="904" fill="#dfeede">a Positivstellensatz witness — reducible to rational arithmetic and</text>
+    <text x="70" y="925" fill="#dfeede">re-runnable byte-for-byte. It implements published algorithms</text>
+    <text x="70" y="946" fill="#dfeede">(Collins CAD, Trager–Bronstein, Tarski) from scratch in Lisp,</text>
+    <text x="70" y="967" fill="#dfeede">depending on no external CAS — so the trust chain is the source.</text>
+  </g>
+
+  <!-- right: the CAD climb achieved -->
+  <text x="752" y="762" fill="#e8c87a" font-size="16" letter-spacing="1.5">THE REAL-QE CLIMB, AS BUILT</text>
+  <g font-size="13.5">
+    <g transform="translate(752,786)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Univariate real QE — complete decision</text>
+    </g>
+    <g transform="translate(752,810)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Two-variable decider — COMPLETE (cells + sections + nested tower)</text>
+    </g>
+    <g transform="translate(752,834)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Projection tower — all n</text>
+    </g>
+    <g transform="translate(752,858)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Algebraic sample points — 2-D and n-D, exact signs by box</text>
+    </g>
+    <g transform="translate(752,882)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Lifting — 3-D, and general-n over full-dimensional cells</text>
+    </g>
+    <g transform="translate(752,906)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">General-n triangular sections — exact irrational witnesses</text>
+    </g>
+    <g transform="translate(752,930)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">Multi-algebraic towers — nested radicals, any height</text>
+    </g>
+    <g transform="translate(752,954)">
+      <circle cx="6" cy="-4" r="6" fill="#8fd6a6"/><text x="22" y="0" fill="#cfe7d6">General regular chain — coupled, vanishing &amp; sign complete</text>
+    </g>
+  </g>
+
+  <!-- footer note -->
+  <text x="752" y="984" fill="#7d7468" font-size="12" font-style="italic">CAD is doubly-exponential and remains the only complete method in practice;</text>
+  <text x="752" y="999" fill="#7d7468" font-size="12" font-style="italic">the frontier is shared with QEPCAD&#160;B, Redlog, Maple &amp; Mathematica.</text>
+</svg>
