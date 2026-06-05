@@ -10,13 +10,13 @@ cd "$ROOT" || exit 2
 problems=0
 
 echo "== module count =="
-echo "  src/cas modules: $(ls src/cas/*.lisp 2>/dev/null | wc -l)"
+echo "  src/cas modules: $(find src/cas -name '*.lisp' 2>/dev/null | wc -l)"
 echo "  examples:        $(ls examples/*.lisp 2>/dev/null | wc -l)"
 echo "  golden pairs:    $(ls tests/cas_*.lisp 2>/dev/null | wc -l) lisp / $(ls tests/cas_*.expected 2>/dev/null | wc -l) expected"
 
 echo "== external imports (should be only logic.lisp) =="
 # match the quoted path regardless of trailing ':as alias', then drop the cas/ ones
-ext="$(grep -rhoE '\(import[[:space:]]+"[^"]+"' src/cas/*.lisp 2>/dev/null | sed -E 's/.*"([^"]+)".*/\1/' | grep -v '^cas/' | sort -u)"
+ext="$(grep -rhoE '\(import[[:space:]]+"[^"]+"' src/cas 2>/dev/null | sed -E 's/.*"([^"]+)".*/\1/' | grep -v '^cas/' | sort -u)"
 if [ -z "$ext" ]; then
   echo "  none beyond cas/ — fully self-contained"
 elif [ "$ext" = 'logic.lisp' ]; then

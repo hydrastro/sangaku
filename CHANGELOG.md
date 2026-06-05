@@ -1,3 +1,21 @@
+# CAS frontier: multivariate SOS certificates + a TPTP-arithmetic bridge (side project)
+
+MAIN FRONTIER
+- Added `src/cas/sosmv.lisp`: MULTIVARIATE sum-of-squares certificates of global nonnegativity -- a sound, one-directional positivity proof. If p = sum q_i^2 then p >= 0 everywhere; the module verifies such a decomposition exactly over Q (expanding with mpoly arithmetic) and reports the residual when a candidate is wrong, never claiming "p is not nonnegative" (the converse fails by Motzkin). Includes the Gauss product identity. Verified: (x+y)^2 certifies x^2+2xy+y^2; {x,y} certifies x^2+y^2; the Motzkin polynomial is acknowledged nonnegative-but-not-SOS (no false certificate). Example 394 + golden cas_sosmv.
+
+SIDE PROJECT (started inside Sangaku, splittable later)
+- Added `src/cas/tptp/core.lisp`: the TPTP-ARITHMETIC BRIDGE. A classifier + router taking an arithmetic goal and dispatching it to the right Sangaku decider with that decider's certificate: contradictory polynomial systems -> Nullstellensatz ('theorem with refuting basis); polynomial identities -> exact check; univariate universal inequalities -> SOS DECISION; multivariate -> SOS certificate ('theorem with witness, 'unknown without -- never falsely refuted); ground comparisons -> direct evaluation; everything else -> 'outside-fragment. Sound by construction. Honest scope: Sangaku is not a FOF/CNF saturation prover; this is the certificate-carrying arithmetic niche. Consumes goals from the tptptp parser lowered to normalized forms. Example 395 + golden cas_tptparith.
+- Made check-structure.sh and find-orphans.sh recurse into src/cas subdirectories (for the new tptp/ submodule tree).
+- Zero regressions; structure and lint clean.
+
+# CAS frontier — the Nullstellensatz decision procedure (and a bridge toward automated theorem proving)
+
+- Added `src/cas/nullstellensatz.lisp`: Sangaku's first genuine DECISION PROCEDURE. By Hilbert's Weak Nullstellensatz, a polynomial system f_1=...=f_m=0 is unsatisfiable over the algebraic closure iff 1 is in the ideal, iff the reduced Groebner basis contains a nonzero constant. nss-decide returns 'unsatisfiable | 'satisfiable; nss-refutes? gives the refutation; nss-verify-refutation re-checks the certificate (1 and each generator reduce to 0 against the basis). This is the algebraic analogue of deriving FALSE from hypotheses -- the shape of an arithmetic theorem-proving (TPTP) goal, with the Groebner basis as proof.
+- Verified: {x, x-1} and {xy-1, x} unsatisfiable (refutations verify); {x-5}, {x^2+y^2-1, x-2} (complex solution), and {} satisfiable.
+- Caught a real bug during construction: normal-forming the constant 1 against a basis hung when exponent vectors had differing lengths; replaced with direct detection of a nonzero constant in the reduced basis (the clean Nullstellensatz test), which is robust and faster.
+- Honest scope: decides satisfiability over the algebraically CLOSED field; real solvability (Positivstellensatz) and full first-order logic are named as separate, harder problems, not conflated.
+- Added example 392 and golden cas_nullstellensatz. Zero regressions; structure and lint clean.
+
 # CAS — axiom mode (simpler proving UX) + the ramified-place integral element (frontier pushed harder)
 
 - Added `lib/cas/axmode.lisp`: an AXIOM MODE for lightweight theorem proving. Load axioms once (ax-assume facts, ax-assume-rule rules, ax-assume-not negative facts), then ax-check any statement for a three-valued verdict: proven (derivable), disproven (negation derivable -- never from mere absence), or independent (neither). A contradictory axiom set is flagged 'inconsistent. Built on logic.lisp's Horn-clause engine, so the verdicts are exactly the trusted engine's. From {human(socrates), mortal(X):-human(X)}: mortal(socrates) proven, mortal(zeus) independent, then disproven once (not (mortal zeus)) is added; multi-step ancestry resolved.

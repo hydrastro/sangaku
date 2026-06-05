@@ -1,0 +1,4 @@
+(example "392-nullstellensatz-decision.lisp" :expect pass)
+(example "393-sos-positivity.lisp" :expect pass)
+(example "394-multivariate-sos-certificate.lisp" :expect pass)
+(example "395-tptp-arith-bridge.lisp" :expect pass)

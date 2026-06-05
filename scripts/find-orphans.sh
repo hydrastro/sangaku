@@ -36,7 +36,7 @@ echo "== modules imported by nothing (candidate dead code) =="
 imports="$(grep -rhoE '\(import[[:space:]]+"cas/[^"]+"' src examples tests 2>/dev/null \
             | sed -E 's/.*"cas\/([^"]+)".*/\1/' | sort -u)"
 orphans=0
-for m in src/cas/*.lisp; do
+for m in $(find src/cas -name '*.lisp'); do
   base="$(basename "$m")"
   # Is this module's filename referenced by any import anywhere?
   if ! printf '%s\n' "$imports" | grep -qx "$base"; then

@@ -4224,3 +4224,55 @@ two valuations, the element, the certificate, and the place classification (rami
 -- the local Riemann-Hurwitz data.  This is a single ramified place of the quadratic cover, by exact polynomial
 division; the general-degree ramification (a Puiseux cycle of length e | n in a degree-n cover) remains ahead, with
 the soundness boundary explicit.
+
+## A decision procedure, and a bridge toward automated theorem proving: the Nullstellensatz (nullstellensatz.lisp)
+
+Sangaku's integrators and algebraic-geometry modules CONSTRUCT objects and certify them; the Nullstellensatz module
+is its first genuine DECISION PROCEDURE -- it answers a yes/no question completely.  By Hilbert's Weak
+Nullstellensatz, a system of polynomial equations f_1 = ... = f_m = 0 has no common zero over the algebraic closure
+of the coefficient field if and only if the constant 1 lies in the ideal <f_1, ..., f_m>, equivalently iff the
+reduced Groebner basis contains a nonzero constant.  The module computes the reduced basis and reports
+'unsatisfiable (with the constant in the basis as a refutation certificate, re-checked by reducing 1 and each
+generator to 0) or 'satisfiable.  Because this is an iff, the verdict is a decision, not a heuristic.
+
+This is the algebraic analogue of deriving FALSE from a set of hypotheses, which is exactly what an automatic
+theorem prover does when it refutes a goal.  A problem of the form "these equational hypotheses are jointly
+contradictory" -- a natural target in the arithmetic divisions of theorem-proving benchmarks like TPTP -- maps
+directly onto nss-refutes?, and the Groebner basis is the proof.  The honest scope is stated rather than blurred:
+this decides satisfiability over the algebraically CLOSED field (the natural home of the Nullstellensatz).
+Solvability over the ordered field of reals -- inequalities, the real Nullstellensatz / Positivstellensatz -- is a
+harder, separate question and is not decided here; nss-real-caveat names that boundary so a complex-unsatisfiability
+verdict is never mistaken for a real one.  Full first-order reasoning (the FOF/CNF divisions) is a different engine
+again: Sangaku's logic layer is an SLD resolver over Horn clauses, a fragment of first-order logic, and the
+Nullstellensatz procedure complements it on exactly the equational-arithmetic goals where ideal membership is the
+right tool.
+
+## Multivariate positivity certificates (sosmv.lisp)
+
+The univariate nonnegativity decision (sos.lisp) rests on an iff that fails in several variables: Motzkin's
+polynomial x^4 y^2 + x^2 y^4 - 3 x^2 y^2 + 1 is nonnegative on all of R^2 yet is not a sum of squares.  So SOS does
+not decide multivariate nonnegativity.  What it still does, soundly and exactly, is PROVE it in one direction: if
+p = sum q_i^2 then p >= 0 everywhere, and the decomposition is a checkable proof.  sosmv.lisp verifies such a
+certificate over Q by expanding the squares with the multivariate polynomial arithmetic of groebner.lisp and
+comparing to p term-for-term; a passing check proves nonnegativity, a failing candidate is reported with its
+residual as "not this SOS", never as "p is not nonnegative".  It also provides the Gauss product identity
+(a^2+b^2)(c^2+d^2) = (ac-bd)^2 + (ad+bc)^2 for combining two sums of squares.  This is the honest multivariate rung:
+a positive certificate proves a theorem; its absence proves nothing, and the Motzkin gap is acknowledged rather
+than papered over.  The full multivariate decision is Tarski's real quantifier elimination, the frontier ahead.
+
+## A side project: the TPTP-arithmetic bridge (tptp/core.lisp)
+
+Sangaku is not a general first-order theorem prover -- its logic layer is an SLD resolver over Horn clauses, a
+fragment of FOL -- so it does not compete in the FOF/CNF divisions of benchmarks like TPTP.  But a large part of
+TPTP's arithmetic family reduces to shapes Sangaku decides exactly, and tptp/core.lisp is the bridge: a classifier
+and router that recognizes the shape of an arithmetic goal and dispatches it to the right decision procedure,
+returning the verdict together with that procedure's certificate.  A contradictory system of polynomial equations
+routes to the Nullstellensatz ('theorem with the refuting Groebner basis); a solvable one is 'countersat; a
+polynomial identity is checked exactly; a univariate universal inequality is DECIDED by the SOS procedure; a
+multivariate one is proved when an SOS witness is supplied and is 'unknown without one (never falsely refuted -- the
+Motzkin boundary); ground comparisons are evaluated.  Anything outside the arithmetic fragment is reported
+'outside-fragment rather than guessed.  The design mirrors how real systems hand arithmetic subgoals to a
+specialized backend, and its value is precisely the certificate-carrying soundness on the arithmetic niche, not
+breadth across all of first-order logic.  The TPTP syntax itself is parsed by the companion project tptptp; the
+bridge consumes goals lowered into its normalized forms.  Started inside Sangaku, it can be split into its own
+package as it grows.

@@ -1,0 +1,6 @@
+nonnegative #t #f
+#t #t
+nonnegative #t
+indefinite indefinite
+(-1 1) indefinite
+nonpositive
