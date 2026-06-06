@@ -16,3 +16,7 @@
 (example "407-general-n-sections.lisp" :expect pass)
 (example "408-general-algebraic-tower.lisp" :expect pass)
 (example "409-general-regular-chain.lisp" :expect pass)
+(example "410-complete-cad-decision.lisp" :expect pass)
+(example "411-unified-real-qe.lisp" :expect pass)
+(example "412-qe-soundness-audit.lisp" :expect pass)
+(example "413-breadth-facade.lisp" :expect pass)

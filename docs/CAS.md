@@ -4531,3 +4531,30 @@ docs/cas-comparison.svg.  The honest summary: the established systems are faster
 sangaku does not attempt, and have decades of hardening; sangaku's distinguishing axis is verifiability -- every
 decision emits a machine-checkable certificate reducible to rational arithmetic, it is built from scratch in Lisp
 with no external CAS dependency, and its source is fully inspectable, so the trust chain is the source itself.
+
+## Three capabilities, unified: real QE as one call, completeness at scale, and a breadth facade
+
+Three parallel pieces complete the system's usability as a real decision engine.
+
+Real quantifier elimination, unified (rqe.lisp).  A single entry point, rqe-decide n quant phi, decides a quantified
+real sentence in any number of variables, in a human-facing Tarski formula language (atoms rqe-gt / rqe-lt / rqe-ge
+/ rqe-le / rqe-eq / rqe-ne, combined with and / or / not).  It dispatches by variable count -- the univariate
+decider for one variable, the complete two-variable decider for two, and for three or more the union of the
+full-dimensional-cell search and the equality-variety section search -- and is reachable both directly and through
+the TPTP bridge (the real-qe-n goal shape routes there, with a qe-verdict-n certificate).  This is the single
+callable real-QE interface the whole development was building toward.
+
+Completeness at scale (cadfull.lisp).  The grid-based general-n decider sees only full-dimensional witnesses; a
+statement like exists x, y . y^2 = x and x = 2, whose only witness is the section point (2, sqrt(2)), is missed
+because the grid never samples x = 2.  cadfull closes this for the two-variable case by sampling the base axis at
+the true CAD breakpoints -- a rational in each open sector AND each real projection root as an algebraic section --
+and deciding each fiber completely; the n-variable case combines this with the equality-variety search in rqe.  A
+soundness and completeness audit (example 412) checks fourteen sentences -- six false ones rejected, eight true ones
+found, across full-dimensional and section witnesses including irrational ones -- with no false verdict.
+
+Breadth, made discoverable (cas.lisp).  The system spans more than two hundred modules; the facade gathers the
+headline procedures under one import and one naming scheme -- cas-decide-real, cas-sat, cas-valid, cas-refutes-over-C
+(Nullstellensatz), cas-nonneg? (sums of squares), cas-nonneg-on? (Positivstellensatz), cas-groebner -- and a
+machine-readable catalogue, cas-capabilities, naming ten domains from real quantifier elimination and symbolic
+integration through coding theory and cryptography.  The facade adds no mathematics; it is the index that makes the
+breadth visible from a single place.

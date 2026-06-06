@@ -1,0 +1,5 @@
+(import "cas/rqe.lisp")
+(define (cn c n) (if (= n 0) c (list (cn c (- n 1)))))
+(define parab (list (list 0 -1) (list) (list 1)))
+(display (rqe-decide 1 (quote exists) (rqe-eq (list 1 0 1)))) (display (rqe-decide 1 (quote forall) (rqe-gt (list 0 1)))) (display (rqe-decide 2 (quote exists) (list (quote and) (rqe-eq parab) (rqe-eq (list (list 1 1)))))) (newline)
+(display (rqe-decide 1 (quote exists) (rqe-eq (list -2 0 1)))) (display (rqe-decide 2 (quote exists) (rqe-eq (list (list -4 0 1) (list) (list 4))))) (display (rqe-decide 2 (quote exists) (list (quote and) (rqe-eq parab) (rqe-eq (list (list -2 1)))))) (newline)
