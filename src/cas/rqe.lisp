@@ -43,6 +43,15 @@
 (import "cas/cadfull.lisp")
 (import "cas/cadgen.lisp")
 (import "cas/cadsecn.lisp")
+(import "cas/cadcomplete.lisp")
+(import "cas/cadtow2.lisp")
+(import "cas/cadwit.lisp")
+(import "cas/cadqe.lisp")
+(import "cas/cadqe2.lisp")
+(import "cas/cadqe3.lisp")
+(import "cas/cadqen.lisp")
+(import "cas/cadqemin.lisp")
+(import "cas/cadunsat.lisp")
 
 ; ----- human-facing atom constructors and translation to internal sign-condition form -----
 (define (rqe-gt p) (list (quote gt) p))
@@ -83,7 +92,11 @@
         ((equal? quant (quote forall)) (if (rqe-exists-n n (list (quote not) phi)) #f #t))
         (else #f)))
 (define (rqe-exists-n n phi)
-  (if (cadgen-exists phi n) #t (rqe-section-exists n phi)))
+  (cond ((cadgen-exists phi n) #t)                      ; full-dimensional cells (cheap grid; catches most full-dim SAT)
+        ((rqe-section-exists n phi) #t)                 ; the diagonal recognizer (cheap, catches the diagonal class)
+        ((cadwit-find phi n) #t)                        ; fast guided witness search for full-dim SAT the grid missed
+        ((cadcomplete-exists phi n) #t)                 ; general per-cell sections of any dimension (recursive lifting)
+        (else (cadtow2-exists phi n))))                 ; irrational-outer-coordinate tower witnesses (simple + coupled)
 
 ; ----- the equality-variety section search for n >= 3 -----
 ; the conjunction's equality atoms (zero . p) define a variety; if it is a triangular chain over the base, build the
@@ -161,3 +174,26 @@
 ; ----- satisfiability and validity convenience -----
 (define (rqe-sat n phi) (rqe-decide n (quote exists) phi))
 (define (rqe-valid n phi) (rqe-decide n (quote forall) phi))
+
+; ----- parametric quantifier elimination: eliminate the quantified variable from a one-parameter family, returning
+; a quantifier-free condition on the parameter (delegates to cadqe; the parameter is outer, the quantified variable
+; inner).  Unlike rqe-decide, which answers a closed sentence #t/#f, this returns an equivalent formula on b. -----
+(define (rqe-eliminate quant phi) (cadqe-formula quant phi))
+; two-parameter parametric QE: eliminate the quantified variable leaving two free parameters (b outer, c inner),
+; returning a quantifier-free condition as sign conditions on the projection factors (delegates to cadqe2).
+(define (rqe-eliminate2 quant phi) (cadqe2-formula quant phi))
+; three-parameter parametric QE (e.g. the general quadratic with free leading coefficient): the caller supplies
+; the projection factors explicitly, since a non-uniform-degree family needs the coefficient factors in the
+; projection; returns the sign-vectors over those factors on which (quant x . phi) holds (delegates to cadqe3).
+(define (rqe-eliminate3 factors quant phi) (cadqe3-elim factors quant phi))
+; general n-parameter parametric QE: the caller supplies the projection factors and the parameter count k; returns
+; the sign-vectors over those factors on which (quant x . phi) holds, by recursively decomposing the k-dimensional
+; parameter space (delegates to cadqen). This subsumes rqe-eliminate/2/3 for k = 1, 2, 3.
+(define (rqe-eliminate-n factors k quant phi) (cadqen-elim factors k quant phi))
+; minimal solution formula: given the realizable true and false sign-vector sets (e.g. from cadqen-elim2), construct
+; a minimal cover of the true cells by prime implicants and render it as a quantifier-free formula (delegates to
+; cadqemin). This is the simplest-formula phase of quantifier elimination (Brown's problem).
+(define (rqe-eliminate-min factors trues falses) (cadqemin-minimize factors trues falses))
+; cheap dimension-independent UNSAT front end: refute an existential conjunction by a non-negativity certificate
+; without building a decomposition; 'unsat is a genuine emptiness, 'unknown defers to the complete deciders
+(define (rqe-unsat-filter phi) (cadunsat-filter phi))

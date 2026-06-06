@@ -122,10 +122,29 @@
 ; ----- iterate the projection `levels` times -----
 (define (cadn-project-tower ps levels) (if (<= levels 0) ps (cadn-project-tower (cadn-lift-coeffs (cadn-project ps)) (- levels 1))))
 ; after one projection the family is a set of mpolys in the remaining vars; to project again we must view each as a
-; poly in the (new) last variable with mpoly coefficients.  cadn-lift-coeffs regroups an mpoly by its last
-; exponent.  (For the verified examples the regrouping is identity-compatible; full general regrouping across many
-; levels is part of the tower bookkeeping.)
-(define (cadn-lift-coeffs ps) ps)
+; poly in the (new) last variable with mpoly coefficients.  cadn-lift-coeffs regroups each mpoly by its last
+; exponent: it collects the monomials sharing each last-variable power into a coefficient mpoly over the remaining
+; (lower) variables, and returns the dense list of those coefficients, low to high in the last variable -- exactly
+; the poly-in-last-variable shape cadn-project consumes.  This makes cadn-project-tower iterate correctly across any
+; number of levels.
+(define (cadn-lift-coeffs ps) (cadn-lift-map ps))
+(define (cadn-lift-map ps) (if (null? ps) (quote ()) (cons (cadn-lift-one (car ps)) (cadn-lift-map (cdr ps)))))
+; regroup a single mpoly (list of (coeff . expvec)) by its last exponent
+(define (cadn-lift-one mp) (cadn-lift-fill (cadn-lift-grp mp (quote ()))))
+(define (cadn-lift-grp monos acc)
+  (if (null? monos) acc
+      (cadn-lift-grp (cdr monos) (cadn-lift-place acc (cadn-lift-lastexp (cdr (car monos))) (cons (car (car monos)) (cadn-lift-droplast (cdr (car monos))))))))
+(define (cadn-lift-lastexp ev) (cond ((null? ev) 0) ((null? (cdr ev)) (car ev)) (else (cadn-lift-lastexp (cdr ev)))))
+(define (cadn-lift-droplast ev) (if (null? (cdr ev)) (quote ()) (cons (car ev) (cadn-lift-droplast (cdr ev)))))
+(define (cadn-lift-place acc power mono)
+  (cond ((null? acc) (list (cons power (list mono))))
+        ((= (car (car acc)) power) (cons (cons power (cons mono (cdr (car acc)))) (cdr acc)))
+        (else (cons (car acc) (cadn-lift-place (cdr acc) power mono)))))
+(define (cadn-lift-fill assoc) (cadn-lift-dense assoc 0 (cadn-lift-maxpow assoc 0)))
+(define (cadn-lift-maxpow assoc m) (if (null? assoc) m (cadn-lift-maxpow (cdr assoc) (cadn-lift-maxi m (car (car assoc))))))
+(define (cadn-lift-maxi a b) (if (> a b) a b))
+(define (cadn-lift-dense assoc k kmax) (if (> k kmax) (quote ()) (cons (cadn-lift-lookup assoc k) (cadn-lift-dense assoc (+ k 1) kmax))))
+(define (cadn-lift-lookup assoc k) (cond ((null? assoc) (quote ())) ((= (car (car assoc)) k) (cdr (car assoc))) (else (cadn-lift-lookup (cdr assoc) k))))
 
 ; ----- a 3-variable existence check on full-dimensional cells (the recursion demonstrated end to end) -----
 ; decide whether a list of strict 3-variable sign conditions can hold simultaneously, by sampling a rational grid

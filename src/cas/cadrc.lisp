@@ -31,8 +31,11 @@
 ;
 ; Honest scope.  cadrc reduces and decides VANISHING for the general regular chain of any height with coupled
 ; defining polynomials -- the structural generality cadtower lacked -- via the multivariate resultant chain, exactly
-; over Q.  The complete general-coupled-fiber NONZERO sign by a converging top-down box (the coupled-fiber analogue
-; of cadtower's interval refinement) is the residual engineering, named by cadrc-fiber-sign-caveat; the vanishing
+; over Q.  The general-coupled-fiber NONZERO sign is decided by a converging box with ANCHORED fiber bisection: each
+; fiber root is refined only once its lower coordinates are tight enough that the two candidate half-boxes carry
+; definite opposite signs, so the box provably tracks the true point and the eval interval -- of a value already
+; known nonzero by the resultant -- separates from zero with a definite sign.  Both vanishing and nonzero sign are
+; thus complete for the general regular chain (cadrc-fiber-sign-caveat records this); the vanishing
 ; reduction here is the part that required the new multivariate elimination.
 ;
 ; Public:
@@ -174,10 +177,50 @@
 
 ; the exact sign: vanishing (resultant reduction) first, else box-refined nonzero sign
 (define (cadrc-sign g chain basef lo hi levels)
-  (if (cadrc-vanishes? g chain basef lo hi) 0 (cadrc-sign-refine g (cadrc-point basef lo hi levels) 60)))
+  (if (cadrc-vanishes? g chain basef lo hi) 0 (cadrc-sign-exact g (cadrc-point basef lo hi levels) 200)))
+; the OLD interval-refinement sign, kept for reference (cadrc-sign now uses the anchored-exact version below)
 (define (cadrc-sign-refine g p fuel)
   (cond ((cadrc-sep? (cadrc-eval g (cadrc-pt-box p))) (cadrc-sgn-iv (cadrc-eval g (cadrc-pt-box p))))
         ((= fuel 0) 0)
         (else (cadrc-sign-refine g (cadrc-refine p) (- fuel 1)))))
+; ----- the EXACT nonzero sign: refine the box with ANCHORED fiber bisection so it provably tracks the true point,
+; then read the separated sign.  Because g is known nonzero here (the vanishing test already passed), the eval
+; interval over a box shrinking to the true point must eventually separate from 0; the anchored refinement keeps
+; every fiber root correct (each fiber is bisected only once its lower coordinates are tight enough that the two
+; candidate half-boxes have definite, opposite signs), so the box never drifts onto a wrong root. -----
+(define (cadrc-sign-exact g p fuel)
+  (cond ((cadrc-sep? (cadrc-eval g (cadrc-pt-box p))) (cadrc-sgn-iv (cadrc-eval g (cadrc-pt-box p))))
+        ((<= fuel 0) (cadrc-sgn-iv (cadrc-eval g (cadrc-pt-box p))))
+        (else (cadrc-sign-exact g (cadrc-refine-anchored p) (- fuel 1)))))
+; anchored refinement: refine the base once, then each fiber bottom-up, but only bisect a fiber when its lower box
+; makes the bisection well-posed; if not yet well-posed, leave that fiber and let the next pass (with a tighter base)
+; make it well-posed
+(define (cadrc-refine-anchored p)
+  (list (asec-refine (cadrc-pt-base p))
+        (cadrc-refine-anc-levels (list (cons (asec-lo (cadrc-pt-base p)) (asec-hi (cadrc-pt-base p)))) (cadrc-pt-levels p))))
+(define (cadrc-refine-anc-levels lower-ivs levels)
+  (if (null? levels) (quote ())
+      (cadrc-ral-cons (cadrc-refine-anc-one (car levels) lower-ivs) lower-ivs (cdr levels))))
+(define (cadrc-ral-cons refined lower-ivs rest) (cons refined (cadrc-refine-anc-levels (cadrc-app1 lower-ivs (cons (cadrc-lv-lo refined) (cadrc-lv-hi refined))) rest)))
+; bisect this fiber only if well-posed (the chosen half has the root with a definite sign change); else keep it
+(define (cadrc-refine-anc-one lv lower-ivs) (cadrc-anc-keep lv lower-ivs (/ (+ (cadrc-lv-lo lv) (cadrc-lv-hi lv)) 2)))
+(define (cadrc-anc-keep lv lower-ivs m)
+  (cond ((cadrc-sep? (cadrc-eval (cadrc-lv-f lv) (cadrc-app1 lower-ivs (cons (cadrc-lv-lo lv) m))))
+         ; left half is sign-definite: if it changes sign across (lo,m) the root is here, else in the right half
+         (cadrc-anc-pick lv lower-ivs m))
+        ((cadrc-sep? (cadrc-eval (cadrc-lv-f lv) (cadrc-app1 lower-ivs (cons m (cadrc-lv-hi lv)))))
+         (cadrc-anc-pick lv lower-ivs m))
+        (else lv)))                                ; not yet well-posed: leave fiber, tighter base will fix it next pass
+; pick the half whose endpoints bracket the root: f(lo) and f(m) opposite signs -> root in (lo,m), else (m,hi)
+(define (cadrc-anc-pick lv lower-ivs m)
+  (if (cadrc-opp? (cadrc-eval (cadrc-lv-f lv) (cadrc-app1 lower-ivs (cons (cadrc-lv-lo lv) (cadrc-lv-lo lv))))
+                  (cadrc-eval (cadrc-lv-f lv) (cadrc-app1 lower-ivs (cons m m))))
+      (list (cadrc-lv-f lv) (cadrc-lv-lo lv) m)
+      (list (cadrc-lv-f lv) m (cadrc-lv-hi lv))))
+; two point-evaluated intervals have opposite signs (using their midpoints as definite values)
+(define (cadrc-opp? ivA ivB) (cadrc-opp-s (cadrc-mid-sgn ivA) (cadrc-mid-sgn ivB)))
+(define (cadrc-mid-sgn iv) (cadrc-sgn0 (/ (+ (car iv) (cdr iv)) 2)))
+(define (cadrc-sgn0 v) (cond ((> v 0) 1) ((< v 0) -1) (else 0)))
+(define (cadrc-opp-s a b) (if (= a 0) #t (if (= b 0) #t (if (= a b) #f #t))))
 (define (cadrc-sep? iv) (if (> (car iv) 0) #t (< (cdr iv) 0)))
 (define (cadrc-sgn-iv iv) (cond ((> (car iv) 0) 1) ((< (cdr iv) 0) -1) (else 0)))

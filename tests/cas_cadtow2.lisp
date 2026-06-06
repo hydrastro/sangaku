@@ -1,0 +1,16 @@
+(import "cas/cadtow2.lisp")
+(define xm2 (list (list (list -2)) (list) (list (list 1))))
+(define y2x (list (list (list) (list) (list 1)) (list (list -1))))
+(define zmy (list (list (list 0 -1) (list 1))))
+(define zxy (list (list (list 0 1)) (list (list) (list -1))))
+(define xm2_2 (list (list -2) (list) (list 1)))
+(define y2x_2 (list (list 0 -1) (list) (list 1)))
+; simple tower (z=y)
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2) (cons (quote zero) y2x) (cons (quote zero) zmy) (cons (quote pos) (list (list (list -1 1))))) 3)) (newline)
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2) (cons (quote zero) y2x) (cons (quote zero) zmy) (cons (quote pos) (list (list (list -2 1))))) 3)) (newline)
+; two-level branches
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2_2) (cons (quote zero) y2x_2) (cons (quote pos) (list (list 0) (list 1)))) 2)) (newline)
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2_2) (cons (quote zero) y2x_2) (cons (quote pos) (list (list 0) (list -1)))) 2)) (newline)
+; COUPLED chain (z=xy): z>0 true, z>2 false
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2) (cons (quote zero) y2x) (cons (quote zero) zxy) (cons (quote pos) (list (list (list 0 1))))) 3)) (newline)
+(display (cadtow2-exists (list (quote and) (cons (quote zero) xm2) (cons (quote zero) y2x) (cons (quote zero) zxy) (cons (quote pos) (list (list (list -2 1))))) 3)) (newline)

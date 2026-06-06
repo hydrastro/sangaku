@@ -1,0 +1,8 @@
+(import "cas/cadwit.lisp")
+(define (zc n) (if (= n 0) 0 (list (zc (- n 1)))))
+(define (one n) (if (= n 0) 1 (list (one (- n 1)))))
+(define (ssqm1 n) (if (= n 1) (list -1 0 1) (list (ssqm1 (- n 1)) (zc (- n 1)) (one (- n 1)))))
+(define (sh n c) (if (= n 1) (list (- 100 c) -20 1) (list (sh (- n 1) (- c 100)) (cadgen-np-scale -20 (one (- n 1)) (- n 1)) (one (- n 1)))))
+(display (cadwit-find (cons (quote neg) (ssqm1 3)) 3)) (newline)
+(display (cadwit-find (cons (quote neg) (sh 3 (/ 1 4))) 3)) (newline)
+(display (cadwit-find (cons (quote neg) (ssqm1 4)) 4)) (newline)

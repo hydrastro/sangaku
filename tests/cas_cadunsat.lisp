@@ -1,0 +1,7 @@
+(import "cas/cadunsat.lisp")
+(display (cadunsat-filter (cons (quote neg) (list 1 0 1)))) (newline)
+(display (cadunsat-filter (cons (quote zero) (list 1 0 1)))) (newline)
+(display (cadunsat-filter (cons (quote neg) (list 1 0 1 0 1)))) (newline)
+(display (cadunsat-filter (list (quote and) (cons (quote neg) (list 1 0 1)) (cons (quote pos) (list -5 1))))) (newline)
+(display (cadunsat-filter (cons (quote zero) (list 0 0 1)))) (newline)
+(display (cadunsat-filter (list (quote and) (cons (quote pos) (list 0 1)) (cons (quote neg) (list -1 1))))) (newline)

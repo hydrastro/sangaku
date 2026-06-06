@@ -84,11 +84,32 @@
 ; ----- the product of the polynomials (its real roots are all the cell breakpoints) -----
 (define (qe-product polys) (qe-prod-go polys (list 1)))
 (define (qe-prod-go ps acc) (if (null? ps) acc (qe-prod-go (cdr ps) (poly-mul acc (qe-nz (car ps))))))
-(define (qe-nz p) (if (null? p) (list 1) p))      ; guard: never multiply by the empty poly
+(define (qe-nz p) (if (qe-allzero? p) (list 1) p))      ; guard: never multiply by the zero poly (empty OR all-zero like (0))
+(define (qe-allzero? p) (cond ((null? p) #t) ((= (car p) 0) (qe-allzero? (cdr p))) (else #f)))
 
 ; ----- open-cell sample points: below all roots, in each gap between isolating intervals, above all roots -----
-(define (qe-sample-points polys) (qe-samples-from (isolate-roots (sqfree-part (qe-product polys))) (qe-bound polys)))
-(define (qe-bound polys) (+ (cauchy-bound (sqfree-part (qe-product polys))) 1))
+(define (qe-sample-points polys) (qe-samples-from (qe-iso-roots polys) (qe-bound polys)))
+(define (qe-iso-roots polys) (if (qe-nonconst-prod? polys) (isolate-roots (sqfree-part (qe-clear-denoms (qe-product polys)))) (quote ())))
+; clear denominators of a polynomial by multiplying through by the lcm of its coefficient denominators, so the
+; integer-coefficient root isolator (sturm) applies; multiplying by a positive constant preserves every root
+(define (qe-clear-denoms p) (qe-cd-scale p (qe-cd-lcm p)))
+(define (qe-cd-scale p m) (if (null? p) (quote ()) (cons (* (car p) m) (qe-cd-scale (cdr p) m))))
+(define (qe-cd-lcm p) (qe-cd-go p 1))
+(define (qe-cd-go p acc) (if (null? p) acc (qe-cd-go (cdr p) (qe-cd-l acc (denominator (car p))))))
+(define (qe-cd-l a b) (/ (* a b) (qe-cd-g a b)))
+(define (qe-cd-g a b) (if (= b 0) a (qe-cd-g b (remainder a b))))
+(define (qe-bound polys) (if (qe-nonconst-prod? polys) (+ (cauchy-bound (sqfree-part (qe-clear-denoms (qe-product polys)))) 1) 1))
+; the product is non-constant iff it has degree >= 1; a constant (or zero) product means every atom is constant in
+; x, so there are no roots to isolate and one sample point (0) suffices -- guard the root machinery, which would
+; otherwise divide by a vanishing leading coefficient in sqfree-part / cauchy-bound
+(define (qe-nonconst-prod? polys) (> (qe-pdeg (qe-product polys)) 0))
+(define (qe-pdeg p) (- (qe-plen (qe-ptrim p)) 1))
+(define (qe-plen l) (if (null? l) 0 (+ 1 (qe-plen (cdr l)))))
+(define (qe-ptrim p) (qe-ptr p (qe-plen p)))
+(define (qe-ptr p k) (cond ((= k 0) (quote ())) ((= (qe-pnth p (- k 1)) 0) (qe-ptr p (- k 1))) (else (qe-ptake p k))))
+(define (qe-pnth l k) (if (= k 0) (car l) (qe-pnth (cdr l) (- k 1))))
+(define (qe-ptake l k) (qe-ptk l k 0))
+(define (qe-ptk l k i) (if (= i k) (quote ()) (cons (car l) (qe-ptk (cdr l) k (+ i 1)))))
 ; isolate-roots gives ordered disjoint intervals (lo . hi as a 2-list). Build samples: -B, midpoints of the gaps
 ; (right end of one interval to left end of the next), and +B. A point inside no interval is a non-root.
 (define (qe-samples-from ivs B)
@@ -117,7 +138,7 @@
 ; sign(q,lo) and sign(q,hi) differing OR q being zero at an endpoint-free test. We use the robust test: q(alpha)=0
 ; iff num-real-roots(gcd(q, prod)) accounts for it -- but to stay simple we test each root interval against each q
 ; by sign change.
-(define (qe-roots polys) (isolate-roots (sqfree-part (qe-product polys))))
+(define (qe-roots polys) (qe-iso-roots polys))
 (define (qe-exists-root f polys) (qe-any-root f (qe-roots polys) polys))
 (define (qe-any-root f ivs polys) (cond ((null? ivs) #f) ((qe-eval-at-root f (car ivs) polys) #t) (else (qe-any-root f (cdr ivs) polys))))
 ; evaluate the formula at the root isolated by interval iv: a condition (op . q) holds at the root if, classifying
@@ -129,11 +150,19 @@
         (else (qe-test (car f) (qe-sign-at-root (cdr f) iv)))))
 (define (qe-all-root fs iv polys) (cond ((null? fs) #t) ((qe-eval-at-root (car fs) iv polys) (qe-all-root (cdr fs) iv polys)) (else #f)))
 (define (qe-any-root-f fs iv polys) (cond ((null? fs) #f) ((qe-eval-at-root (car fs) iv polys) #t) (else (qe-any-root-f (cdr fs) iv polys))))
-; sign of q at the root isolated in iv=(lo,hi): if q has a root in (lo,hi) (sign(q,lo)*sign(q,hi) <= 0 with q not
-; identically the breakpoint) treat as 0; else q's constant sign on the interval (= sign at lo, a non-root rational).
+; sign of q at the root isolated in iv=(lo,hi): if q vanishes at that root treat as 0; else q's constant sign on the
+; interval (= sign at lo, a non-root rational).  Vanishing must be detected via the SQUARE-FREE part of q, because an
+; even-multiplicity root of q (e.g. x^2 at x=0) does not change the sign of q itself across the interval, yet q does
+; vanish there; the square-free part has only simple roots and changes sign reliably.
 (define (qe-sign-at-root q iv)
-  (if (qe-vanishes? q iv) 0 (qe-sgn q (qe-lo iv))))
-(define (qe-vanishes? q iv) (qe-le0 (* (qe-sgn q (qe-lo iv)) (qe-sgn q (qe-hi iv)))))
+  (cond ((qe-allzero? q) 0)                              ; the zero polynomial is identically 0
+        ((qe-const-poly? q) (qe-sgn0 (qe-const-val q)))  ; a nonzero constant has that constant's sign everywhere
+        ((qe-vanishes? q iv) 0)
+        (else (qe-sgn q (qe-lo iv)))))
+(define (qe-const-poly? q) (< (qe-pdeg q) 1))            ; degree 0 (or the trimmed-empty zero poly)
+(define (qe-const-val q) (if (null? q) 0 (car q)))
+(define (qe-sgn0 v) (cond ((> v 0) 1) ((< v 0) -1) (else 0)))
+(define (qe-vanishes? q iv) (qe-le0 (* (qe-sgn (sqfree-part q) (qe-lo iv)) (qe-sgn (sqfree-part q) (qe-hi iv)))))
 (define (qe-le0 n) (if (< n 0) #t (= n 0)))
 
 ; ----- full existential: some cell (open or root) satisfies f -----

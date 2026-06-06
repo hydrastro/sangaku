@@ -137,30 +137,33 @@
         (else (cons (car phi) (cadfull-subst-x (cdr phi) a)))))
 (define (cadfull-sxf fs a) (if (null? fs) (quote ()) (cons (cadfull-subst-x-formula (car fs) a) (cadfull-sxf (cdr fs) a))))
 
-; decide a univariate-in-y formula completely: sample y at sector rationals and section roots of the y-polys
-(define (cadfull-decide-y phi ypolys) (cadfull-yscan phi (cadfull-ysamples ypolys)))
-(define (cadfull-ysamples ypolys) (cadfull-ysamp (cadfull-cleard (cadfull-uprod ypolys))))
+; decide a univariate-in-y formula completely: at the rational sector samples (evaluated exactly by poly-eval) and
+; at the section roots of the y-polys (evaluated exactly as real algebraic numbers, so an equality atom that the
+; root satisfies is recognized as zero and the inequalities get their true signs there)
+(define (cadfull-decide-y phi ypolys) (cadfull-decide-y2 phi (cadfull-cleard (cadfull-uprod ypolys))))
 (define (cadfull-uprod ps) (cadfull-uprod-go ps (list 1)))
 (define (cadfull-uprod-go ps acc) (if (null? ps) acc (cadfull-uprod-go (cdr ps) (poly-mul acc (cadfull-nz (car ps))))))
-(define (cadfull-ysamp u)
-  (if (cadfull-const? u) (list 0)
-      (cadfull-ypoints (isolate-roots u))))
-(define (cadfull-ypoints ivs)
-  (cadfull-app (cadfull-y-rats ivs) (cadfull-y-roots ivs)))
+(define (cadfull-decide-y2 phi prod)
+  (if (cadfull-const? prod)
+      (cadfull-eval-y phi 0)                                   ; no y-breakpoints: the fiber is sign-invariant, probe 0
+      (cadfull-decide-y3 phi prod (isolate-roots prod))))
+(define (cadfull-decide-y3 phi prod ivs)
+  (if (cadfull-yscan phi (cadfull-y-rats ivs)) #t (cadfull-yscan-roots phi prod ivs)))
+; the rational sector samples between/around the roots, evaluated exactly
 (define (cadfull-y-rats ivs)
   (if (null? ivs) (list 0)
       (cons (- (cadfull-lo (car ivs)) 1) (cadfull-y-gaps ivs))))
 (define (cadfull-y-gaps ivs)
   (cond ((null? (cdr ivs)) (list (+ (cadfull-hi (car ivs)) 1)))
         (else (cons (cadfull-mid (cadfull-hi (car ivs)) (cadfull-lo (car (cdr ivs)))) (cadfull-y-gaps (cdr ivs))))))
-; the section roots in y: each isolated root is rational if an endpoint is a root, else we use its midpoint refined;
-; for exact decision at a y-root we test the formula's sign conditions using the root's isolating interval via a
-; rational probe at the midpoint after refining so each y-poly is sign-definite -- but since the y-polys are exactly
-; the ones whose roots these are, a root makes its own poly zero; we evaluate by the algebraic-number sign
-(define (cadfull-y-roots ivs) (cadfull-yr ivs))
-(define (cadfull-yr ivs) (if (null? ivs) (quote ()) (cons (cadfull-mid (cadfull-lo (car ivs)) (cadfull-hi (car ivs))) (cadfull-yr (cdr ivs)))))
 (define (cadfull-yscan phi ys) (cond ((null? ys) #f) ((cadfull-eval-y phi (car ys)) #t) (else (cadfull-yscan phi (cdr ys)))))
-; evaluate a univariate-in-y formula at a rational y = b
+; the section roots: each isolated root of `prod` is the real algebraic number in its interval; evaluate phi there
+; with EXACT algebraic-number signs (asec-sign), so equalities the root satisfies read as zero
+(define (cadfull-yscan-roots phi prod ivs)
+  (cond ((null? ivs) #f)
+        ((cadfull-eval-y-alg phi (asec-make prod (cadfull-lo (car ivs)) (cadfull-hi (car ivs)))) #t)
+        (else (cadfull-yscan-roots phi prod (cdr ivs)))))
+; evaluate a univariate-in-y formula at a rational y = b (exact)
 (define (cadfull-eval-y phi b)
   (cond ((equal? (car phi) (quote and)) (cadfull-yall (cdr phi) b))
         ((equal? (car phi) (quote or)) (cadfull-yany (cdr phi) b))
@@ -168,6 +171,14 @@
         (else (cadfull-ytest (car phi) (cadfull-sgn (poly-eval (cdr phi) b))))))
 (define (cadfull-yall fs b) (cond ((null? fs) #t) ((cadfull-eval-y (car fs) b) (cadfull-yall (cdr fs) b)) (else #f)))
 (define (cadfull-yany fs b) (cond ((null? fs) #f) ((cadfull-eval-y (car fs) b) #t) (else (cadfull-yany (cdr fs) b))))
+; evaluate a univariate-in-y formula at a real algebraic number alpha (exact, via asec-sign)
+(define (cadfull-eval-y-alg phi alpha)
+  (cond ((equal? (car phi) (quote and)) (cadfull-yall-alg (cdr phi) alpha))
+        ((equal? (car phi) (quote or)) (cadfull-yany-alg (cdr phi) alpha))
+        ((equal? (car phi) (quote not)) (if (cadfull-eval-y-alg (car (cdr phi)) alpha) #f #t))
+        (else (cadfull-ytest (car phi) (asec-sign (cdr phi) alpha)))))
+(define (cadfull-yall-alg fs alpha) (cond ((null? fs) #t) ((cadfull-eval-y-alg (car fs) alpha) (cadfull-yall-alg (cdr fs) alpha)) (else #f)))
+(define (cadfull-yany-alg fs alpha) (cond ((null? fs) #f) ((cadfull-eval-y-alg (car fs) alpha) #t) (else (cadfull-yany-alg (cdr fs) alpha))))
 (define (cadfull-ytest op s)
   (cond ((equal? op (quote zero)) (= s 0))
         ((equal? op (quote pos)) (= s 1))
@@ -187,9 +198,12 @@
 ; rational probe inside alpha's interval, plus the equality-variety test.
 (define (cadfull-section phi alpha)
   (if (cadfull-section-strict phi alpha) #t (cadfull-section-eq phi alpha)))
-; strict: sample y at the sector/section rationals of the fibers at a rational probe near alpha, test via csec
+; strict: sample y at the sector rationals of the fibers at a rational probe near alpha, test via csec
 (define (cadfull-section-strict phi alpha)
   (cadfull-sec-scan phi alpha (cadfull-ysamples (cadfull-fibers-at (cadfull-polys-of phi) (cadfull-probe alpha)))))
+; the rational y sector samples for a univariate-in-y family (used by the algebraic-x section branch)
+(define (cadfull-ysamples ypolys) (cadfull-ysamp (cadfull-cleard (cadfull-uprod ypolys))))
+(define (cadfull-ysamp u) (if (cadfull-const? u) (list 0) (cadfull-y-rats (isolate-roots u))))
 (define (cadfull-probe alpha) (cadfull-mid (asec-lo alpha) (asec-hi alpha)))
 (define (cadfull-fibers-at polys x0) (cadfull-subst-x-polys polys x0))
 (define (cadfull-sec-scan phi alpha ys) (cond ((null? ys) #f) ((csec-eval-strict phi alpha (car ys)) #t) (else (cadfull-sec-scan phi alpha (cdr ys)))))

@@ -10,3 +10,8 @@
 (define gz2 (list (list (cons -2 (list 0 0))) (list (cons 1 (list 0 0)))))
 (define gz3 (list (list (cons -3 (list 0 0))) (list (cons 1 (list 0 0)))))
 (display (cadrc-sign gz chain base 1 2 levels)) (display " ") (display (cadrc-sign gz2 chain base 1 2 levels)) (display " ") (display (cadrc-sign gz3 chain base 1 2 levels)) (display " ") (display (cadrc-sign f3 chain base 1 2 levels)) (newline)
+(define f3c (list (list (cons -1 (list 1 1))) (list (cons 1 (list 0 0)))))
+(define f2c (list (list (cons -1 (list 1))) (list) (list (cons 1 (list 0)))))
+(define chainc (list f3c f2c))
+(define gnz (list (list (cons -1681792830 (list 0 0))) (list (cons 1000000000 (list 0 0)))))
+(display (cadrc-sign gnz chainc (list -2 0 1) 1 2 (list (list f2c 1 (/ 3 2)) (list f3c 1 2)))) (newline)

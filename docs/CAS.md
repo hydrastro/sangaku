@@ -4558,3 +4558,294 @@ headline procedures under one import and one naming scheme -- cas-decide-real, c
 machine-readable catalogue, cas-capabilities, naming ten domains from real quantifier elimination and symbolic
 integration through coding theory and cryptography.  The facade adds no mathematics; it is the index that makes the
 breadth visible from a single place.
+
+## General-position sections: completeness on cells of every dimension for n >= 3
+
+The earlier n >= 3 section search recognized only the DIAGONAL case -- equalities forcing all coordinates equal to a
+single base algebraic number, as in the body diagonal of the sphere.  cadcomplete.lisp replaces that narrow
+recognizer with genuine recursive cylindrical sampling: the outermost variable is sampled at the TRUE breakpoints of
+the family (a rational point in each open sector, and each real root of the family's projection onto that variable
+as a section, possibly irrational), each sample is substituted, and the decision recurses on the lower-dimensional
+family, bottoming out in the complete two-variable decider (cadfull) and the univariate decider.
+
+Because the sampling is over genuine projection breakpoints rather than a fixed grid or a diagonal ansatz, the
+witnesses reached are no longer limited to one shape.  Non-diagonal sections, positive-dimensional sections (curves
+and surfaces sitting inside R^n), and zero-dimensional sections off the diagonal are all decided.  For the unit
+sphere in R^3 this means the open equatorial arc (a one-dimensional section, with an irrational witness), the
+meridian circles, and the individual poles are each found -- not only the body-diagonal point 1/sqrt(3).
+
+Two foundational fixes made this work.  First, cadn-lift-coeffs in cadnd.lisp -- the step that regroups a projected
+multivariate polynomial by its new last variable so the projection can iterate to the next level -- was previously
+an identity stub, which silently prevented the projection tower from descending past one level for general families;
+it now performs the genuine regrouping, so cadn-project-tower descends correctly for any number of variables.
+Second, cadfull.lisp's fiber decision was evaluating section roots at rational midpoints of their isolating
+intervals, so an equality atom that a root satisfies read as nonzero and the section witness was missed; section
+roots are now evaluated as exact real algebraic numbers (via algnum2), so for example the open arc x^2 + y^2 = 1 with
+x > 0 and y > 0 is correctly found.  Rational section coordinates are detected exactly by a Stern-Brocot search for
+the simplest rational in each isolating interval, keeping the recursion exact and rational wherever the section
+coordinate is rational.
+
+In the unified entry point (rqe.lisp) the general decider is wired in additively and as the last resort: the fast
+full-dimensional grid runs first, then the cheap diagonal recognizer, and only then the general recursive lifting,
+so the common cases stay fast while the previously-undecidable general sections are now reached.  The general
+decider is sound on every cell -- each sample tested is a genuine real point -- and the verdicts agree with the
+soundness/completeness audit on the cases it newly covers.
+
+## Coupled regular chains: tower lifting when the fibers mix several lower variables
+
+The irrational-outer tower decider (cadtow2.lisp) first recognizes the SIMPLE chain -- each defining equality an
+extension by one new variable over the immediately preceding one, the nested-radical shape sqrt(2), 2^(1/4), ... --
+and decides it directly with cadtower.lisp.  When the chain is instead COUPLED, with a defining polynomial mixing
+several lower variables at once (z = x*y or z = x + y, where z depends on both x and y), the simple recognizer
+declines and the decision falls through to a coupled-chain path that reads the chain in cadrc.lisp's representation
+-- each fiber a polynomial in its top variable with multivariate-polynomial coefficients over the lower variables --
+builds the fiber boxes by substituting a rational probe vector of the lower coordinates into each coupled fiber and
+isolating its roots, enumerates the real branches, and tests the inequality atoms at the chain point with
+cadrc-sign, whose vanishing and sign decisions go through the multivariate resultant with regrouping between levels.
+
+This closes the last structural gap in the tower frontier.  For example exists x, y, z. x^2 = 2 and y^2 = x and
+z = x*y and z > 0 is decided true (the witness sqrt(2), 2^(1/4), 2^(3/4), whose outer coordinate is irrational and
+whose top coordinate couples the two below it), and the same with z > 2 is correctly false; the additive coupling
+z = x + y is handled identically.  Soundness is unchanged: every constructed point is a genuine real point of the
+chain and every sign is exact.  In the unified entry point the coupled path runs only after the full-dimensional
+grid, the diagonal recognizer, the general per-cell section lifting, and the simple-tower path, so the common cases
+stay fast; the cas_rqe and cas_qe_audit goldens are unchanged.
+
+## Parametric quantifier elimination: eliminating a quantifier from a one-parameter family
+
+Deciding a closed sentence true or false is the satisfiability question; the headline capability of a real-QE system
+is quantifier ELIMINATION proper -- turning a formula with a free parameter, such as exists x . x^2 + b < 0, into an
+equivalent quantifier-free condition on the parameter, here b < 0, the way QEPCAD or Mathematica's Resolve answers
+it.  cadqe.lisp provides this for one quantified variable over one free parameter (the planar case).
+
+The method is the cylindrical algebraic decomposition of the PARAMETER line.  With the parameter b outer and the
+quantified variable x inner, the projection of the family onto b -- the discriminant in x of each polynomial and the
+resultants in x between them -- is a univariate polynomial in b whose real roots cut the b-line into cells (open
+sectors and the section points between them) on each of which the family is sign-invariant in x, hence on each of
+which the quantified statement has a constant truth value.  Evaluating that truth value once per cell, by
+substituting a sample b and deciding the resulting univariate statement with the complete univariate decider
+(realqe), labels every cell; the eliminated formula is the union of the true cells, rendered as sign conditions on
+b, with adjacent true cells sharing a boundary merged (b < 0 or b = 0 becomes b <= 0).
+
+For example exists x . x^2 + b < 0 gives b < 0; forall x . x^2 - b >= 0 gives b <= 0; exists x . x^2 = b gives
+b >= 0 (the section b = 0 is included, since x = 0 solves x^2 = 0); exists x . x^2 = b and x > 0 gives b > 0 (the
+section is excluded, since x = 0 is not positive); exists x . (x - b)^2 - 1 < 0 gives true; and exists x .
+x^2 + b^2 + 1 < 0 gives false.  The entry point rqe-eliminate exposes this beside rqe-decide.  Within scope the
+result is exact: the projection is exact and each cell's truth is decided by the complete univariate decider on an
+exact sample; more parameters are the general parametric CAD, which cadqe-caveat names.
+
+This advance also closed a completeness bug in the univariate decider it sits on: an existential equality at an
+even-multiplicity root (exists x . x^2 = 0) was wrongly reported false, because the sign-change test used to detect
+that a polynomial vanishes in an isolating interval misses a root the polynomial only touches without crossing.  The
+fix tests vanishing via the square-free part of the polynomial, whose roots are all simple and change sign reliably;
+the realqe golden is unchanged, the fix only adding correct verdicts.
+
+## Multi-parameter quantifier elimination: the discriminant locus
+
+One-parameter elimination (cadqe.lisp) turns exists x . x^2 + b < 0 into a condition on the single parameter b.  The
+textbook quantifier-elimination example needs TWO free parameters: exists x . x^2 + b x + c = 0 over the reals, whose
+answer is the discriminant locus b^2 - 4 c >= 0, a quantifier-free formula in b and c.  cadqe2.lisp provides this for
+two parameters and one quantified variable.
+
+The construction generalizes the parameter LINE of cadqe to the parameter PLANE.  With the two parameters b (outer)
+and c (inner) and the quantified variable x eliminated, the projection of the family onto (b, c) -- the discriminant
+in x of each polynomial and the resultants in x between them, computed by the multivariate resultant (cadnd) -- is a
+set of polynomials in (b, c) whose zero sets partition the plane into cells of constant truth.  The plane is
+decomposed by the planar projection-and-lift (project the (b, c) factors onto b, sample each b-sector and section,
+and over each b-sample isolate the c-roots and sample the c-cells), giving a point in every cell; deciding the
+quantified statement once per cell with the complete univariate decider labels every cell, and the eliminated
+condition is read off the cells that hold, as the SIGN VECTOR of the projection factors there.
+
+So exists x . x^2 + b x + c = 0 is reported as "the discriminant factor -b^2 + 4c has sign 0 or negative", i.e.
+b^2 - 4c >= 0; exists x . x^2 + b x + c < 0 as discriminant strictly positive (b^2 - 4c > 0); forall x .
+x^2 + b x + c > 0 as discriminant strictly negative (b^2 - 4c < 0); and a pure resultant case, exists x . x = b and
+x = c, as the factor b - c equal to zero, i.e. b = c.  The entry point rqe-eliminate2 exposes this beside
+rqe-eliminate (one parameter) and rqe-decide (closed sentences).  Within scope the result is exact: the projection is
+the exact multivariate resultant and each cell's truth is decided by the complete univariate decider on an exact
+rational sample.  Three or more parameters are the general parametric CAD over a higher-dimensional parameter space,
+together with full solution-formula construction; cadqe2-caveat names that boundary.
+
+## Three-parameter quantifier elimination: the general quadratic, and a step toward minimal solution formulas
+
+Two-parameter elimination (cadqe2.lisp) computes the discriminant locus of the monic quadratic.  The hard textbook
+quantifier-elimination example is the GENERAL quadratic, with a free leading coefficient,
+
+  exists x . a x^2 + b x + c = 0   over the reals,
+
+whose answer is not simply the discriminant: when a = 0 the polynomial drops to degree one (or zero), so the
+discriminant condition no longer governs.  The full law has a genuine case split on the leading coefficient,
+
+  (a != 0 and b^2 - 4 a c >= 0)   or   (a = 0 and b != 0)   or   (a = 0 and b = 0 and c = 0).
+
+cadqe3.lisp reaches this by extending the parameter PLANE of cadqe2 to the parameter 3-SPACE.  With the three
+parameters a (outer), b, c and the quantified x eliminated, the projection of the family onto (a, b, c) -- which
+must include the leading coefficient itself, since its vanishing changes the degree, so the factors are taken as a,
+b, c and the discriminant b^2 - 4 a c -- partitions the 3-space into cells of constant truth.  The 3-space is swept
+outer-to-inner: project the factors onto a, sample each a-cell, and over each a-sample substitute a into the factors
+and reuse cadqe2's planar (b, c) sweep; each (a, b, c) sample is decided once by the complete univariate decider, and
+the eliminated condition is read off as the SIGN VECTOR of the factors on the true cells.  All true sign-vectors are
+verified to satisfy the general-quadratic law, with the three strata -- the genuine quadratic, the degenerate
+linear, and the trivial identity -- all recovered.  The entry point rqe-eliminate3 exposes this beside the one- and
+two-parameter eliminators.
+
+Reaching this required two further completeness fixes in the univariate decider underneath.  First, the zero or
+constant polynomial that a degenerate parameter point produces (a = b = c = 0 makes the family the identity 0 = 0)
+was dividing by a vanishing leading coefficient in the bound and square-free routines; a constant-product guard now
+returns no roots and one sample point, so the constant atom is evaluated directly.  Second, root isolation assumed
+integer coefficients, but the refined rational sample points produce rational coefficients after substitution
+(x^2 + x + 1/8); clearing denominators by the coefficient-denominator lcm before isolation -- a positive scaling that
+preserves every root and sign -- makes the decider robust to rational coefficients.  Both fixes leave the realqe
+golden unchanged, adding only correct verdicts.  A third, independent fix sharpened the parameter-plane sampler:
+the raw isolating intervals from the root isolator can be wide (the root 1/4 of 1 - 4 c is isolated only to
+(-5/4, 5/4), whose midpoint 0 is not the root), so each isolating interval is now refined to a tight width before its
+midpoint is taken as the root estimate, which recovers the parameter cells -- such as the all-positive
+discriminant-positive stratum of the general quadratic -- that the coarse sampling had missed.
+
+Finally, cadqesimp.lisp is a step toward minimal SOLUTION-FORMULA construction.  The parametric eliminators report
+the eliminated condition as a raw disjunction of full sign vectors over every projection factor -- correct, but
+verbose (the general quadratic produces more than twenty).  Producing the simplest equivalent formula is Brown's
+solution-formula-construction problem.  cadqesimp minimizes the set of true sign vectors the way Quine-McCluskey
+minimizes a Boolean cover, by two merge rules applied to a fixpoint: dropping a factor whose three signs all appear
+(factor elimination), and merging two signs of a factor into a relation, positive-or-zero into >= 0, negative-or-zero
+into <= 0, positive-or-negative into != 0 (sign merging), with absorption of subsumed cubes.  Each merge preserves
+the covered parameter points, so the simplified formula is equivalent to the raw disjunction.  On the clean
+discriminant case it reaches the exact textbook relation -- the two sign cells of the monic quadratic collapse to
+"discriminant <= 0" -- and on the general quadratic it reduces the raw cover substantially.  It is not guaranteed
+globally minimal; true minimality over three-valued sign covers is the open refinement (cadqe3-caveat,
+cadqesimp not being a complete minimizer), and the doubly-exponential cost of CAD itself (Davenport-Heintz) remains
+inherent to the problem.
+
+## General n-parameter quantifier elimination: arbitrary parameter dimension by recursion
+
+The parameter line (cadqe), plane (cadqe2), and 3-space (cadqe3) are the dimension-1, 2, and 3 instances of one
+construction.  cadqen.lisp gives the construction itself, for a parameter space of arbitrary dimension k: eliminate
+one quantified variable from a formula with k free parameters, returning the quantifier-free condition as the sign
+vectors of the projection factors over the parameter cells on which the statement holds.
+
+A parameter polynomial is carried as a list of monomials (coeff e_1 ... e_k) over the k parameters in order, and the
+parameter space is decomposed by recursion on k.  At k = 1 it is the parameter line: isolate the roots of every
+factor (refining each isolating interval to a tight width so its midpoint is an accurate rational root estimate),
+and sample below, between, above, and at the roots.  At k > 1 it projects every factor onto the outer parameter
+(the roots of each factor's pure-outer restriction, together with the outer = 0 locus where a factor's lower-
+dimensional degree can drop), samples each outer cell, substitutes the outer value into every factor -- peeling the
+first exponent and lowering the parameter count by one -- and recurses on the resulting (k-1)-parameter subproblem,
+prefixing the outer value to each lower-dimensional sample.  Each parameter sample is decided once by the complete
+univariate decider; the eliminated condition is the set of factor sign-vectors over the satisfiable cells.
+
+The recursion reproduces cadqe3 exactly on the general quadratic (k = 3, the same twenty-three sign-vectors), and
+solves a genuine four-parameter problem: exists x . a x = b and c x = d -- two linear equations sharing a solution --
+over the factors a, b, c, d and the resultant b c - a d, yielding the resultant locus b c - a d = 0 on the
+nondegenerate stratum, with the degenerate strata (a vanishing leading coefficient forcing the corresponding
+constant to vanish) correctly separated by the coefficient factors.  The entry point rqe-eliminate-n exposes this,
+subsuming rqe-eliminate, rqe-eliminate2, and rqe-eliminate3 at k = 1, 2, 3.
+
+Reaching the four-parameter degenerate strata required closing two more completeness gaps in the univariate decider,
+both about the constant and zero polynomials a degenerate parameter point produces inside a CONJUNCTION.  The
+product guard that protects root isolation treated only the empty list as the zero polynomial, letting an explicit
+zero coefficient list such as (0) -- the polynomial of the atom 0 = 0 -- collapse the whole product to zero and
+erase the genuine roots of the other conjuncts; the guard now treats any all-zero coefficient list as the constant
+one.  And the sign-at-a-root routine called the square-free part on the atom polynomial, dividing by a vanishing
+leading coefficient for a constant atom; it now reads a constant atom's sign directly (zero for the zero polynomial,
+the constant's sign otherwise).  Both leave the realqe golden unchanged, adding only correct verdicts, so that for
+instance exists x . 0 = 0 and x = 5 now correctly decides true.  cadqen-caveat records the honest boundary: the
+projection factors are supplied rather than computed for fully general non-uniform-degree input, and the cost is the
+inherent doubly-exponential cost of CAD in the parameter dimension (Davenport-Heintz).
+
+## True minimal solution formulas: prime-implicant cover with don't-cares
+
+cadqesimp reduces the raw sign-vector output of parametric quantifier elimination by Quine-McCluskey-style merging,
+but merging is only the first phase of minimization and can leave a redundant cover.  cadqemin.lisp performs the
+genuine second phase -- a MINIMAL cover of the true cells by prime implicants -- which is the simplest-formula core
+of Brown's solution-formula-construction problem.
+
+The decisive ingredient is that the sign-vector space carries DON'T-CARES.  A projection factor's sign is not free
+(a discriminant's sign is fixed by the coefficients), so of the 3^m sign patterns over m factors only some are
+geometrically realizable.  The eliminator therefore supplies two sets, the realizable patterns on which the
+statement is TRUE and those on which it is FALSE; every other pattern is unrealizable and is a don't-care.  A cube --
+a conjunction of sign or relation conditions -- is VALID exactly when it covers no realizable false cell, and within
+that constraint may freely cover true cells and don't-cares.  This is minimization with don't-cares, the
+realizable-false set serving as the validity oracle.  cadqemin runs the two classical phases: prime generation, by
+generalizing each true cell one position at a time (an exact sign to a two-sign relation >=, <=, or !=, a relation to
+"any") as far as it remains valid, yielding a maximal valid cube; and minimal cover, by forcing in the essential
+primes (those alone covering some true cell) and then greedily covering the rest.
+
+On the general quadratic, given the complete realizable true/false partition over the factors a, b, c, and the
+discriminant, this returns exactly the textbook three-branch law
+
+  (a != 0 and b^2 - 4 a c >= 0)  or  (a = 0 and b != 0)  or  (a = 0 and c = 0),
+
+the canonical solution formula -- verified to be sound (every branch covers no false cell) and complete (every true
+cell is covered).  The entry point rqe-eliminate-min exposes this; cadqen-elim2 supplies the true and false
+sign-vector sets a sweep produces.
+
+Two honest boundaries remain, recorded by cadqemin-caveat.  The cover step is essential-prime-plus-greedy, exact on
+the standard examples and always sound and complete, but the exact minimum set cover is NP-hard -- the genuinely hard
+core of Brown's problem -- so global optimality is not guaranteed for every input.  And the minimality of the result
+is only as good as the completeness of the supplied true/false partition: the independent-axis parameter sampler can
+miss measure-zero BOUNDARY cells (a discriminant exactly zero with prescribed coefficient signs, the tangent-root
+stratum), since it is not a full cylindrical projection carrying the coupling between parameters; on a sampled
+partition cadqemin therefore uses the conservative validity rule -- a cube must cover only cells proven true -- which
+keeps the formula sound at some cost in minimality, while on a complete partition it attains the true minimum.
+
+## Exact boundary sampling: complete partitions for true minimal formulas
+
+cadqemin attains the true minimal solution formula only on a COMPLETE true/false partition of the sign-cells, and
+the gap that kept the general quadratic from reaching it was not the minimizer but the SAMPLER.  cadqen samples each
+parameter cell by refined rational approximations of the projection-factor roots, so a sample meant to lie on a
+boundary surface -- the discriminant exactly zero -- lands a hair off it, and the tangent stratum (a real double
+root, b^2 = 4 a c) is recorded with the wrong sign and lost.
+
+cadqenx.lisp closes this for the families that the standard examples inhabit: those whose projection factors have
+RATIONAL roots.  It keeps cadqen's recursion but recovers the EXACT rational roots of each factor by the rational
+root theorem (a candidate p/q has p dividing the constant term and q the leading term) and samples each parameter
+level at those exact roots, in addition to rational points strictly between and beyond them.  Because a rational
+section value is substituted exactly, the downstream factors stay exact, so an inner factor that vanishes on the
+boundary -- the discriminant's exact rational root -- is sampled exactly and the boundary cell is recorded with its
+true sign zero.  For the general quadratic the discriminant factor 1 - 4 c (at a = b = 1) has the exact root c = 1/4,
+the tangent cell (a > 0, b > 0, c > 0, disc = 0) is captured, and the true-cell count rises from twenty-three to
+twenty-seven to include the boundary stratum.
+
+On that complete partition cadqemin produces a sound and complete three-branch minimal formula directly from the
+elimination sweep -- no conservative fallback.  The pipeline is end to end: cadqenx-elim2 samples the parameter space
+with exact boundary points and returns the complete realizable true/false partition; cadqemin covers the true cells
+by prime implicants; the result is a genuine minimal solution formula.  The honest boundary, recorded by
+cadqenx-caveat: a factor with IRRATIONAL roots still has its sections sampled by approximation, since an exact
+section sample would need an algebraic-number sample point, so for such families the boundary coverage is partial and
+the conservative validity rule still applies.  For rational-root projections -- the general quadratic and the
+linear-system examples among them -- the partition is complete and the minimum is attained.
+
+## Closing the open boundaries: irrational sections, exact minimal cover, scale, and the cost theorem
+
+Four boundaries that the parametric-QE and solution-formula work had left open are addressed together here.
+
+IRRATIONAL boundary surfaces.  cadqenr.lisp samples a parameter section -- a cell where a projection factor vanishes
+-- at the exact ALGEBRAIC number when its root is irrational, the case cadqenx (rational sections only) could not
+reach.  A section is the real root of a factor isolated in a rational interval; the section factor's sign there is
+zero by definition, the sign of every other factor is computed exactly by refining the interval until that factor is
+sign-constant on it (the classical sign-at-an-algebraic-number computation, with a shared root detected through a
+common factor), and the family is decided exactly at the algebraic point by substituting it with algebraic-number
+arithmetic over Q(alpha).  Thus exists x . (x - p = 0) and (x^2 - 2 = 0) is eliminated to the irrational locus
+p^2 - 2 = 0, with the sections at p = +- sqrt 2 captured exactly and the surrounding sectors correctly false.  The
+one-parameter sweep is complete this way; multi-parameter algebraic towers remain the documented boundary
+(cadqenr-caveat).
+
+EXACT minimal cover.  cadqemin gains a branch-and-bound minimum-cover solver (cadqemin-cover-exact,
+cadqemin-minimize-exact) that finds a provably minimum cover of the true cells by prime implicants, forcing in the
+essential primes and branching on the primes covering each uncovered cell with a size bound for pruning -- the exact
+optimum, where the earlier essential-plus-greedy cover was merely good.  On the general quadratic both return the
+three-branch law; on greedy-trap instances the exact solver is strictly smaller.  cadqemin-cover-best chooses exact
+for the small prime sets quantifier elimination produces and greedy otherwise.
+
+Completeness AT SCALE.  cadunsat.lisp is a sound, dimension-independent UNSAT filter: an existential conjunction is
+refuted as soon as one conjunct contradicts a non-negativity certificate -- g < 0 with g a sum of squares, g = 0
+with g strictly positive, and the symmetric cases -- with no decomposition built and in time independent of the
+number of variables.  It is a one-directional sound filter (unsat is genuine emptiness, unknown defers to the
+complete deciders), the cheap front end that settles a class of large unsatisfiable instances without paying the
+decomposition cost.
+
+The doubly-exponential COST.  This is a theorem (Davenport-Heintz), not an implementation limit, and it is now
+documented as such with the cell growth measured directly: a uniform family of k independent linear parameter
+factors produces 3, 9, 27, 81, ... sample cells as k = 1, 2, 3, 4, the exponential blow-up in the dimension that the
+worst case compounds into a double exponential through projection.  cadwit (witness search) and cadunsat (refutation
+filter) are the honest response -- not beating the bound, but avoiding it on the easy half of instances in each
+direction.

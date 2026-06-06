@@ -1,0 +1,6 @@
+(or (< b 0))
+(or (<= b 0))
+(or (>= b 0))
+(or (> b 0))
+true
+false

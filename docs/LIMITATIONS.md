@@ -281,3 +281,98 @@ In short: the CAS computes correctly on its supported fragment, and the
 proof layer faithfully shows the logical dependency structure down to
 the axioms — but turning "cited" into "checked" is future work, tracked
 in `docs/CAS.md`.
+
+## Real quantifier elimination: the remaining frontier in general-n section lifting
+
+The general n >= 3 decider (cadcomplete.lisp) samples the outer variable at true breakpoints and recurses, reaching
+sections of every dimension whose coordinates are RATIONAL at each level (full-dimensional cells, rational sections,
+and -- through the complete two-variable base -- two-variable fibers with irrational coordinates).  When an OUTER
+section coordinate is itself irrational, the decider currently recurses at a rational probe inside that coordinate's
+isolating interval, which catches the full-dimensional and rational-fiber witnesses lying over the section but
+delegates the genuinely irrational-outer-coordinate section witnesses to the diagonal recognizer and the tower
+search (cadtower / cadrc).  Carrying the algebraic outer coordinate symbolically down the recursion in a tower
+Q(alpha_1)(alpha_2)... -- the full ascending lifting phase of a general CAD over towers of real algebraic numbers --
+is the deep remaining piece; it is the part real CAD implementations spent years engineering, and it is named here
+honestly rather than papered over.  Everything the decider reports is sound; what is bounded is which irrational
+sections it can newly CONSTRUCT a witness on.
+
+## Update: coupled regular chains are now decided
+
+The note above described coupled chains -- defining polynomials mixing several lower variables at once -- as the
+residual generality beyond the simple iterated-extension tower.  That gap is now closed: cadtow2.lisp's coupled-chain
+path reads such a chain in cadrc.lisp's representation and decides sign and vanishing at the chain point by the
+multivariate resultant, so witnesses like sqrt(2), 2^(1/4), 2^(3/4) of x^2 = 2 and y^2 = x and z = x*y are found.
+What remains genuinely open is scale and the general coupled-fiber NONZERO sign in the hardest cases (cadrc decides
+vanishing for the general chain exactly, and the nonzero sign by a converging top-down box; cadrc-fiber-sign-caveat
+names the residual), together with the unavoidable doubly-exponential cost of CAD itself.
+
+## Update: parametric QE present; coupled-fiber sign exact; a univariate completeness bug fixed
+
+Three further gaps named earlier are now addressed. (1) Quantifier elimination with a free PARAMETER -- not just
+deciding closed sentences -- is provided by cadqe.lisp for one parameter and one quantified variable, via the CAD of
+the parameter line (exists x. x^2+b<0 -> b<0). The general multi-parameter parametric CAD remains the open scope
+(cadqe-caveat). (2) The general coupled-fiber NONZERO sign in cadrc.lisp is now exact via anchored box refinement,
+so both vanishing and sign are complete for the general regular chain. (3) A completeness bug in the univariate
+decider -- an existential equality at an even-multiplicity root reported false -- was fixed by testing vanishing on
+the square-free part. What remains genuinely open is SCALE in the worst case (mitigated, not removed, by the
+cadwit partial-CAD witness accelerator) and the inherent doubly-exponential cost of CAD itself (Davenport-Heintz),
+which is a theorem about the problem, not a limitation of this implementation.
+
+## Update: two-parameter quantifier elimination present
+
+Parametric QE now extends from one parameter (cadqe.lisp) to TWO (cadqe2.lisp): the discriminant locus
+exists x. x^2+bx+c=0 -> b^2-4c>=0 and similar are computed by decomposing the parameter PLANE via the multivariate
+resultant projection and reading the answer as sign conditions on the projection factors. The open scope is now
+three or more parameters -- the general parametric CAD over a higher-dimensional parameter space -- together with
+minimal solution-formula construction (producing the simplest equivalent formula, Brown's problem), and the inherent
+doubly-exponential cost of CAD itself (Davenport-Heintz), which is a theorem about the problem.
+
+## Update: three-parameter QE (the general quadratic) present; a solution-formula simplifier added
+
+Parametric QE now extends to THREE parameters (cadqe3.lisp): the general quadratic exists x. a*x^2+b*x+c=0 with a
+free leading coefficient, whose answer is the leading-coefficient case split, not the discriminant alone. A
+solution-formula simplifier (cadqesimp.lisp) minimizes the raw sign-vector output toward a compact formula, reaching
+the exact textbook relation on the clean cases. What remains genuinely open: FOUR or more parameters (the general
+parametric CAD over a higher-dimensional parameter space), and TRUE minimality of solution formulas over three-valued
+sign covers (Brown's problem -- cadqesimp reduces but does not guarantee the global minimum). The doubly-exponential
+cost of CAD itself (Davenport-Heintz) remains inherent to the problem, not a limitation of this implementation.
+
+## Update: parametric QE now reaches arbitrary parameter dimension
+
+Parametric QE is no longer capped at three parameters: cadqen.lisp eliminates one quantified variable over a
+parameter space of ANY dimension k by recursion (project the outer parameter, sample, substitute, recurse), with the
+parameter line as the base. It reproduces cadqe3 on the general quadratic (k=3) and solves a genuine four-parameter
+linear-system problem (the resultant locus). What remains genuinely open: TRUE minimality of solution formulas over
+three-valued sign covers (Brown's problem -- cadqesimp reduces but does not guarantee the global minimum), the
+supplied (rather than fully auto-computed) projection for arbitrary non-uniform-degree input, and the inherent
+doubly-exponential cost of CAD in the parameter dimension (Davenport-Heintz), which is a theorem about the problem.
+
+## Update: true minimal solution formulas (prime-implicant cover)
+
+The simplest-formula phase of parametric QE is now implemented: cadqemin.lisp computes a minimal cover of the true
+sign-cells by prime implicants with don't-cares, returning the exact textbook three-branch law for the general
+quadratic. What remains genuinely open: exact GLOBAL minimum cover (NP-hard, Brown's hard core -- cadqemin uses
+essential-plus-greedy, exact on standard cases), and complete BOUNDARY sampling (the independent-axis sampler can
+miss measure-zero tangent cells, so on a sampled partition cadqemin trades some minimality for soundness via
+conservative validity). The doubly-exponential cost of CAD in the parameter dimension (Davenport-Heintz) remains
+inherent.
+
+## Update: exact boundary sampling completes the partition for rational-root projections
+
+The minimal-formula gap was the sampler, now closed for rational-root projections: cadqenx.lisp samples each
+parameter level at the EXACT rational roots of the projection factors (rational root theorem), capturing the
+measure-zero boundary cells (discriminant exactly zero, the tangent stratum) that approximate sampling missed. The
+general quadratic now yields a complete true/false partition (true cells 23 -> 27), on which cadqemin produces a
+genuine three-branch minimal formula directly from the sweep. What remains open: IRRATIONAL-root projections (exact
+section sampling would need algebraic-number sample points, so conservative validity still applies there); exact
+GLOBAL minimum cover (NP-hard, Brown's hard core); and the inherent doubly-exponential cost of CAD (Davenport-Heintz).
+
+## Update: four boundaries addressed (irrational sections, exact cover, scale filter, cost theorem)
+
+Irrational boundary surfaces are now sampled exactly for the one-parameter sweep (cadqenr.lisp, algebraic-number
+sections); the minimal-formula cover can be computed as a provable global minimum (cadqemin-cover-exact, branch and
+bound); a sound dimension-independent UNSAT filter settles a class of large infeasible problems without a
+decomposition (cadunsat.lisp); and the doubly-exponential cost is documented as the Davenport-Heintz theorem with
+cell growth measured directly. What remains genuinely open: MULTI-PARAMETER algebraic-number sections (the tower of
+extensions cadqenr does not build for k >= 2), and the worst-case doubly-exponential cost itself, which is inherent
+to the problem and cannot be removed -- only avoided on the easy instances, which cadwit and cadunsat do.
