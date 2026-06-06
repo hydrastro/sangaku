@@ -1,0 +1,8 @@
+(import "cas/certlean.lisp")
+(display (equal? (certlean-reconstruct (certlean-sos-terms (list 1 1 1))) (list 1 1 1))) (newline)
+(display (equal? (certlean-reconstruct (certlean-sos-terms (list 1 -4 5))) (list 1 -4 5))) (newline)
+(display (certlean-sos-terms (list 1 -2 1))) (newline)
+(display (certlean-lean-poly "x" (list 1 0 -1 0 1))) (newline)
+(display (certlean-sq-hints (certlean-sos-terms (list 1 1 1)))) (newline)
+(display (certlean-sign-bracket (list -2 0 1) 1 2)) (newline)
+(display (certlean-sign-bracket (list -2 0 1) 2 3)) (newline)

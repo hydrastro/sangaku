@@ -52,6 +52,7 @@
 (import "cas/cadqen.lisp")
 (import "cas/cadqemin.lisp")
 (import "cas/cadunsat.lisp")
+(import "cas/qedispatch.lisp")
 
 ; ----- human-facing atom constructors and translation to internal sign-condition form -----
 (define (rqe-gt p) (list (quote gt) p))
@@ -197,3 +198,7 @@
 ; cheap dimension-independent UNSAT front end: refute an existential conjunction by a non-negativity certificate
 ; without building a decomposition; 'unsat is a genuine emptiness, 'unknown defers to the complete deciders
 (define (rqe-unsat-filter phi) (cadunsat-filter phi))
+; the recommended fast entry point: route a univariate existential sentence to the cheapest complete method
+; (linear -> Fourier-Motzkin, refutable -> UNSAT filter, else -> CAD), with a verdict equal to the full decider
+(define (rqe-decide-fast phi) (qedispatch-decide phi))
+(define (rqe-route phi) (qedispatch-route phi))

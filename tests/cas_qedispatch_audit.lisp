@@ -1,0 +1,6 @@
+(import "cas/qedispatch.lisp")
+(define (agrees? phi) (equal? (qedispatch-decide phi) (qe-decide (quote exists) phi)))
+(define (all-agree? phis) (cond ((null? phis) #t) ((agrees? (car phis)) (all-agree? (cdr phis))) (else #f)))
+(display (all-agree? (list (cons (quote nonneg) (list 0 1)) (cons (quote zero) (list -5 2)) (cons (quote neg) (list 1 1))))) (newline)
+(display (all-agree? (list (list (quote and) (cons (quote pos) (list -2 1)) (cons (quote pos) (list 2 -1))) (list (quote and) (cons (quote nonneg) (list -2 1)) (cons (quote pos) (list 2 -1)))))) (newline)
+(display (all-agree? (list (cons (quote zero) (list -2 0 1)) (cons (quote neg) (list 1 0 1)) (cons (quote nonneg) (list 0 0 1))))) (newline)

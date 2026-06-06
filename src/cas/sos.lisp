@@ -70,10 +70,20 @@
 ; ----- the core decision: nonnegative iff odd factor has no real root and (degree 0 or leading coeff > 0) -----
 (define (sos-nonneg? p) (if (sos-zero? p) #t (sos-nn-go (sos-trim p))))
 (define (sos-nn-go p) (if (> (sos-lead p) 0) (sos-no-real-odd? p) #f))
-(define (sos-no-real-odd? p) (= (num-real-roots (sos-odd-factor p)) 0))
+; real-root counting requires integer coefficients (cauchy-bound and the Sturm chain assume them), but sos-odd-factor
+; and sos-monic produce rational coefficients; clear denominators first -- the real-root count is invariant under
+; multiplying a polynomial by a positive integer, so this changes nothing mathematically
+(define (sos-int-roots p) (num-real-roots (sos-clear-denoms p)))
+(define (sos-clear-denoms p) (sos-scale-int p (sos-lcm-denoms p)))
+(define (sos-lcm-denoms p) (sos-lcm-go p 1))
+(define (sos-lcm-go p acc) (if (null? p) acc (sos-lcm-go (cdr p) (sos-lcm2 acc (denominator (car p))))))
+(define (sos-lcm2 a b) (/ (* a b) (sos-gcd2 a b)))
+(define (sos-gcd2 a b) (if (= b 0) a (sos-gcd2 b (remainder a b))))
+(define (sos-scale-int p m) (if (null? p) (quote ()) (cons (* (car p) m) (sos-scale-int (cdr p) m))))
+(define (sos-no-real-odd? p) (= (sos-int-roots (sos-odd-factor p)) 0))
 
 ; ----- strictly positive: nonnegative AND no real root at all (p itself real-root-free) -----
-(define (sos-positive? p) (if (sos-zero? p) #f (if (sos-nonneg? p) (= (num-real-roots (sos-monic p)) 0) #f)))
+(define (sos-positive? p) (if (sos-zero? p) #f (if (sos-nonneg? p) (= (sos-int-roots (sos-monic p)) 0) #f)))
 
 ; ----- nonpositive: -p is nonnegative -----
 (define (sos-nonpos? p) (sos-nonneg? (poly-scale -1 p)))
@@ -88,15 +98,15 @@
 ; ----- the certificate -----
 (define (sos-certificate p)
   (if (sos-nonneg? p)
-      (list (quote nonneg-cert) (quote odd-factor) (sos-odd-factor p) (quote real-roots-of-odd) (num-real-roots (sos-odd-factor p)))
-      (list (quote sign-change) (quote odd-factor) (sos-odd-factor p) (quote real-roots) (num-real-roots (sos-odd-factor p)))))
+      (list (quote nonneg-cert) (quote odd-factor) (sos-odd-factor p) (quote real-roots-of-odd) (sos-int-roots (sos-odd-factor p)))
+      (list (quote sign-change) (quote odd-factor) (sos-odd-factor p) (quote real-roots) (sos-int-roots (sos-odd-factor p)))))
 
 ; ----- verify the certificate: the odd factor's real-root count is 0 exactly when we claim nonnegativity, and the
 ; leading-coefficient sign is consistent with the verdict -----
 (define (sos-verify p) (if (sos-zero? p) #t (sos-verify-go (sos-trim p))))
 (define (sos-verify-go p) (if (sos-nonneg? p) (sos-vchk p #t) (sos-vchk-indef p)))
-(define (sos-vchk p expect) (if (= (num-real-roots (sos-odd-factor p)) 0) (> (sos-lead p) 0) #f))
-(define (sos-vchk-indef p) (if (> (num-real-roots (sos-odd-factor p)) 0) #t (< (sos-lead p) 0)))
+(define (sos-vchk p expect) (if (= (sos-int-roots (sos-odd-factor p)) 0) (> (sos-lead p) 0) #f))
+(define (sos-vchk-indef p) (if (> (sos-int-roots (sos-odd-factor p)) 0) #t (< (sos-lead p) 0)))
 
 ; ----- honest scope boundary -----
 (define (sos-multivariate-caveat) (quote univariate-only-multivariate-needs-Positivstellensatz-or-Tarski-QE))

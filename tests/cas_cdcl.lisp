@@ -1,0 +1,8 @@
+(import "cas/cdcl.lisp")
+(display (cdcl-solve 2 (list (list 1 2) (list -1 2) (list 1 -2) (list -1 -2)))) (newline)
+(display (cdcl-sat? 3 (list (list 1 2) (list -1 3)))) (newline)
+(display (cdcl-solve 3 (list (list 1) (list -1 2) (list -2 3) (list -3)))) (newline)
+(display (cdcl-solve 6 (list (list 1 2) (list 3 4) (list 5 6) (list -1 -3) (list -1 -5) (list -3 -5) (list -2 -4) (list -2 -6) (list -4 -6)))) (newline)
+(define big (list (list 1 2 3) (list -1 -2) (list -2 -3) (list 4 5) (list -4 6) (list -5 -6) (list 7 8) (list -7 -8) (list 1 -4) (list 3 7)))
+(display (cdcl-sat? 8 big)) (newline)
+(display (cdcl-check-model big (cdcl-model))) (newline)

@@ -1,0 +1,7 @@
+(import "cas/certspec.lisp")
+(display (certspec-valid-format? (certspec-order-nonneg-cert))) (newline)
+(display (certspec-domain (certspec-order-nonneg-cert))) (newline)
+(display (certspec-valid-format? (list (quote order)))) (newline)
+(display (certspec-check (certspec-order-nonneg-cert))) (newline)
+(display (certspec-check (certspec-order-sum-cert))) (newline)
+(display (certspec-check (certspec-make (quote order) (cs-ord-Ge (quote ord_zero) (cs-app2 (quote ord_mul) (quote ord_x) (quote ord_x))) (cs-app (quote ord_sq_nonneg) (quote ord_x))))) (newline)

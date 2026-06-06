@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1180" font-family="Georgia, 'Times New Roman', serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1220" font-family="Georgia, 'Times New Roman', serif">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#1a1614"/>
@@ -10,17 +10,17 @@
     </linearGradient>
   </defs>
 
-  <rect width="1400" height="1180" fill="url(#bg)"/>
+  <rect width="1400" height="1220" fill="url(#bg)"/>
 
   <g stroke="#ffffff" stroke-opacity="0.025" stroke-width="1">
     <line x1="0" y1="250" x2="1400" y2="250"/>
-    <line x1="0" y1="560" x2="1400" y2="560"/>
-    <line x1="0" y1="860" x2="1400" y2="860"/>
+    <line x1="0" y1="600" x2="1400" y2="600"/>
+    <line x1="0" y1="900" x2="1400" y2="900"/>
   </g>
 
   <text x="70" y="78" fill="#f3ead4" font-size="40" font-style="italic" letter-spacing="1">sangaku</text>
   <text x="70" y="110" fill="#c9a85c" font-size="19" letter-spacing="3">A PROOF-CARRYING COMPUTER ALGEBRA SYSTEM — IN CONTEXT</text>
-  <text x="70" y="138" fill="#8c8278" font-size="15.5" font-style="italic">Where a from-scratch, verifiable CAS stands beside the established systems. Honest about both its edge and its limits.</text>
+  <text x="70" y="138" fill="#8c8278" font-size="15.5" font-style="italic">A from-scratch CAS that routes to the cheapest complete method, carries kernel-checked proofs, and is honest about the wall.</text>
   <line x1="70" y1="156" x2="1330" y2="156" stroke="#c9a85c" stroke-opacity="0.4" stroke-width="1.5"/>
 
   <text x="70" y="196" fill="#e8c87a" font-size="17" letter-spacing="2">CAPABILITY &amp; CHARACTER MATRIX</text>
@@ -30,85 +30,84 @@
     <text x="848" y="232">Mathematica</text>
     <text x="970" y="232">Maple</text>
     <text x="1088" y="232">QEPCAD&#160;B</text>
-    <text x="1210" y="232">Redlog</text>
+    <text x="1210" y="232">Lean+mathlib</text>
     <text x="1306" y="232">SymPy</text>
   </g>
 
-  <rect x="640" y="246" width="120" height="556" fill="url(#sangakuCol)" stroke="#c9a85c" stroke-opacity="0.35" stroke-width="1" rx="4"/>
+  <rect x="640" y="246" width="120" height="596" fill="url(#sangakuCol)" stroke="#c9a85c" stroke-opacity="0.35" stroke-width="1" rx="4"/>
 
   <g font-size="14.5">
-    <text x="70" y="270" fill="#c8bda9">Real QE — decide closed sentences</text>
-    <text x="70" y="312" fill="#c8bda9">Parametric QE — arbitrary parameter count</text>
-    <text x="70" y="354" fill="#c8bda9">Minimal solution formulas (exact prime cover)</text>
-    <text x="70" y="396" fill="#c8bda9">Irrational boundary sections (algebraic pts)</text>
-    <text x="70" y="438" fill="#c8bda9">Cheap UNSAT filter (dimension-independent)</text>
-    <text x="70" y="480" fill="#c8bda9">Breadth (calculus, number theory, …)</text>
-    <text x="70" y="522" fill="#c8bda9">Machine-checkable proof objects</text>
-    <text x="70" y="564" fill="#c8bda9">Built from scratch, no CAS deps</text>
-    <text x="70" y="606" fill="#c8bda9">Source open &amp; fully inspectable</text>
+    <text x="70" y="270" fill="#c8bda9">Real &amp; parametric QE, minimal formulas</text>
+    <text x="70" y="312" fill="#c8bda9">Complete linear fast-path (Fourier–Motzkin)</text>
+    <text x="70" y="354" fill="#c8bda9">Auto-dispatch to cheapest complete method</text>
+    <text x="70" y="396" fill="#c8bda9">Proves radical-unsolvability (quintic → S₅)</text>
+    <text x="70" y="438" fill="#c8bda9">Proof terms in a dependent-type kernel</text>
+    <text x="70" y="480" fill="#c8bda9">Same engine computes AND proves (one system)</text>
+    <text x="70" y="522" fill="#c8bda9">Cross-validated soundness audit</text>
+    <text x="70" y="564" fill="#c8bda9">Breadth (calculus, number theory, …)</text>
+    <text x="70" y="606" fill="#c8bda9">Built from scratch, no CAS deps</text>
     <text x="70" y="648" fill="#c8bda9">Exact rational / algebraic arithmetic</text>
-    <text x="70" y="690" fill="#c8bda9">Scale to many variables (worst case)</text>
+    <text x="70" y="690" fill="#c8bda9">Complete at scale, worst case (impossible)</text>
     <text x="70" y="732" fill="#c8bda9">Maturity / decades of hardening</text>
   </g>
 
   <g>
-    <circle cx="700" cy="265" r="7" fill="#6fae6f"/><circle cx="848" cy="265" r="7" fill="#6fae6f"/><circle cx="970" cy="265" r="7" fill="#6fae6f"/><circle cx="1088" cy="265" r="7" fill="#6fae6f"/><circle cx="1210" cy="265" r="7" fill="#6fae6f"/><circle cx="1306" cy="265" r="7" fill="#c9a85c"/>
-    <circle cx="700" cy="307" r="7" fill="#6fae6f"/><circle cx="848" cy="307" r="7" fill="#6fae6f"/><circle cx="970" cy="307" r="7" fill="#6fae6f"/><circle cx="1088" cy="307" r="7" fill="#6fae6f"/><circle cx="1210" cy="307" r="7" fill="#6fae6f"/><circle cx="1306" cy="307" r="7" fill="#6b645c"/>
-    <circle cx="700" cy="349" r="7" fill="#6fae6f"/><circle cx="848" cy="349" r="7" fill="#6fae6f"/><circle cx="970" cy="349" r="7" fill="#6fae6f"/><circle cx="1088" cy="349" r="7" fill="#6fae6f"/><circle cx="1210" cy="349" r="7" fill="#6fae6f"/><circle cx="1306" cy="349" r="7" fill="#6b645c"/>
-    <circle cx="700" cy="391" r="7" fill="#6fae6f"/><circle cx="848" cy="391" r="7" fill="#6fae6f"/><circle cx="970" cy="391" r="7" fill="#6fae6f"/><circle cx="1088" cy="391" r="7" fill="#6fae6f"/><circle cx="1210" cy="391" r="7" fill="#c9a85c"/><circle cx="1306" cy="391" r="7" fill="#6b645c"/>
-    <circle cx="700" cy="433" r="7" fill="#6fae6f"/><circle cx="848" cy="433" r="7" fill="#c9a85c"/><circle cx="970" cy="433" r="7" fill="#c9a85c"/><circle cx="1088" cy="433" r="7" fill="#6fae6f"/><circle cx="1210" cy="433" r="7" fill="#6fae6f"/><circle cx="1306" cy="433" r="7" fill="#6b645c"/>
-    <circle cx="700" cy="475" r="7" fill="#c9a85c"/><circle cx="848" cy="475" r="7" fill="#6fae6f"/><circle cx="970" cy="475" r="7" fill="#6fae6f"/><circle cx="1088" cy="475" r="7" fill="#6b645c"/><circle cx="1210" cy="475" r="7" fill="#c9a85c"/><circle cx="1306" cy="475" r="7" fill="#6fae6f"/>
-    <circle cx="700" cy="517" r="7" fill="#6fae6f"/><circle cx="848" cy="517" r="7" fill="#6b645c"/><circle cx="970" cy="517" r="7" fill="#6b645c"/><circle cx="1088" cy="517" r="7" fill="#c9a85c"/><circle cx="1210" cy="517" r="7" fill="#6b645c"/><circle cx="1306" cy="517" r="7" fill="#6b645c"/>
-    <circle cx="700" cy="559" r="7" fill="#6fae6f"/><circle cx="848" cy="559" r="7" fill="#6b645c"/><circle cx="970" cy="559" r="7" fill="#6b645c"/><circle cx="1088" cy="559" r="7" fill="#c9a85c"/><circle cx="1210" cy="559" r="7" fill="#c9a85c"/><circle cx="1306" cy="559" r="7" fill="#c9a85c"/>
+    <circle cx="700" cy="265" r="7" fill="#6fae6f"/><circle cx="848" cy="265" r="7" fill="#6fae6f"/><circle cx="970" cy="265" r="7" fill="#6fae6f"/><circle cx="1088" cy="265" r="7" fill="#6fae6f"/><circle cx="1210" cy="265" r="7" fill="#c9a85c"/><circle cx="1306" cy="265" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="307" r="7" fill="#6fae6f"/><circle cx="848" cy="307" r="7" fill="#6fae6f"/><circle cx="970" cy="307" r="7" fill="#6fae6f"/><circle cx="1088" cy="307" r="7" fill="#6fae6f"/><circle cx="1210" cy="307" r="7" fill="#6fae6f"/><circle cx="1306" cy="307" r="7" fill="#c9a85c"/>
+    <circle cx="700" cy="349" r="7" fill="#6fae6f"/><circle cx="848" cy="349" r="7" fill="#6fae6f"/><circle cx="970" cy="349" r="7" fill="#6fae6f"/><circle cx="1088" cy="349" r="7" fill="#6b645c"/><circle cx="1210" cy="349" r="7" fill="#6b645c"/><circle cx="1306" cy="349" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="391" r="7" fill="#6fae6f"/><circle cx="848" cy="391" r="7" fill="#6fae6f"/><circle cx="970" cy="391" r="7" fill="#6fae6f"/><circle cx="1088" cy="391" r="7" fill="#6b645c"/><circle cx="1210" cy="391" r="7" fill="#c9a85c"/><circle cx="1306" cy="391" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="433" r="7" fill="#6fae6f"/><circle cx="848" cy="433" r="7" fill="#6b645c"/><circle cx="970" cy="433" r="7" fill="#6b645c"/><circle cx="1088" cy="433" r="7" fill="#6b645c"/><circle cx="1210" cy="433" r="7" fill="#6fae6f"/><circle cx="1306" cy="433" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="475" r="7" fill="#6fae6f"/><circle cx="848" cy="475" r="7" fill="#6b645c"/><circle cx="970" cy="475" r="7" fill="#6b645c"/><circle cx="1088" cy="475" r="7" fill="#6b645c"/><circle cx="1210" cy="475" r="7" fill="#6b645c"/><circle cx="1306" cy="475" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="517" r="7" fill="#6fae6f"/><circle cx="848" cy="517" r="7" fill="#6fae6f"/><circle cx="970" cy="517" r="7" fill="#6fae6f"/><circle cx="1088" cy="517" r="7" fill="#6fae6f"/><circle cx="1210" cy="517" r="7" fill="#6fae6f"/><circle cx="1306" cy="517" r="7" fill="#6fae6f"/>
+    <circle cx="700" cy="559" r="7" fill="#6fae6f"/><circle cx="848" cy="559" r="7" fill="#6fae6f"/><circle cx="970" cy="559" r="7" fill="#6fae6f"/><circle cx="1088" cy="559" r="7" fill="#6b645c"/><circle cx="1210" cy="559" r="7" fill="#c9a85c"/><circle cx="1306" cy="559" r="7" fill="#6fae6f"/>
     <circle cx="700" cy="601" r="7" fill="#6fae6f"/><circle cx="848" cy="601" r="7" fill="#6b645c"/><circle cx="970" cy="601" r="7" fill="#6b645c"/><circle cx="1088" cy="601" r="7" fill="#6fae6f"/><circle cx="1210" cy="601" r="7" fill="#6fae6f"/><circle cx="1306" cy="601" r="7" fill="#6fae6f"/>
     <circle cx="700" cy="643" r="7" fill="#6fae6f"/><circle cx="848" cy="643" r="7" fill="#6fae6f"/><circle cx="970" cy="643" r="7" fill="#6fae6f"/><circle cx="1088" cy="643" r="7" fill="#6fae6f"/><circle cx="1210" cy="643" r="7" fill="#6fae6f"/><circle cx="1306" cy="643" r="7" fill="#6fae6f"/>
-    <circle cx="700" cy="685" r="7" fill="#6b645c"/><circle cx="848" cy="685" r="7" fill="#6fae6f"/><circle cx="970" cy="685" r="7" fill="#6fae6f"/><circle cx="1088" cy="685" r="7" fill="#c9a85c"/><circle cx="1210" cy="685" r="7" fill="#c9a85c"/><circle cx="1306" cy="685" r="7" fill="#6b645c"/>
+    <circle cx="700" cy="685" r="7" fill="#c9a85c"/><circle cx="848" cy="685" r="7" fill="#c9a85c"/><circle cx="970" cy="685" r="7" fill="#c9a85c"/><circle cx="1088" cy="685" r="7" fill="#c9a85c"/><circle cx="1210" cy="685" r="7" fill="#c9a85c"/><circle cx="1306" cy="685" r="7" fill="#c9a85c"/>
     <circle cx="700" cy="727" r="7" fill="#6b645c"/><circle cx="848" cy="727" r="7" fill="#6fae6f"/><circle cx="970" cy="727" r="7" fill="#6fae6f"/><circle cx="1088" cy="727" r="7" fill="#6fae6f"/><circle cx="1210" cy="727" r="7" fill="#6fae6f"/><circle cx="1306" cy="727" r="7" fill="#6fae6f"/>
   </g>
 
   <g font-size="13" fill="#9a8f80">
     <circle cx="700" cy="766" r="6" fill="#6fae6f"/><text x="712" y="771">strong</text>
-    <circle cx="800" cy="766" r="6" fill="#c9a85c"/><text x="812" y="771">partial</text>
-    <circle cx="902" cy="766" r="6" fill="#6b645c"/><text x="914" y="771">weak / absent</text>
+    <circle cx="800" cy="766" r="6" fill="#c9a85c"/><text x="812" y="771">partial / inherent limit</text>
+    <circle cx="960" cy="766" r="6" fill="#6b645c"/><text x="972" y="771">weak / absent</text>
   </g>
+  <text x="70" y="800" fill="#6f665d" font-size="12" font-style="italic">The "complete at scale, worst case" row is amber for every system — real QE is doubly-exponential by theorem; no implementation, present or future, beats it.</text>
 
-  <line x1="70" y1="820" x2="1330" y2="820" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="70" y1="860" x2="1330" y2="860" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1"/>
 
-  <text x="70" y="856" fill="#e8c87a" font-size="16" letter-spacing="1.5">THE DISTINGUISHING AXIS — VERIFIABILITY</text>
+  <text x="70" y="896" fill="#e8c87a" font-size="16" letter-spacing="1.5">THE HONEST SHAPE OF A "BEAST"</text>
 
   <g font-size="15" fill="#b3a896">
-    <text x="70" y="884">The established systems are faster, broader, and complete at a scale</text>
-    <text x="70" y="905">sangaku does not attempt. Their kernels, however, are closed or vast:</text>
-    <text x="70" y="926">a result is trusted because the system is trusted.</text>
+    <text x="70" y="924">You cannot beat the worst case — real quantifier elimination is</text>
+    <text x="70" y="945">doubly-exponential, a theorem, not an engineering gap. So a CAS is</text>
+    <text x="70" y="966">a beast not by escaping the wall but by rarely hitting it.</text>
   </g>
   <g font-size="15" fill="#dfeede">
-    <text x="70" y="956">sangaku inverts this. Every decision emits a checkable certificate —</text>
-    <text x="70" y="977">a Sturm sign sequence, a Sylvester determinant, an isolating box, an</text>
-    <text x="70" y="998">algebraic-number section, a sum-of-squares witness — reducible to</text>
-    <text x="70" y="1019">exact rational arithmetic and re-runnable byte-for-byte. It implements</text>
-    <text x="70" y="1040">published algorithms (Collins CAD, Trager–Bronstein, Tarski, regular</text>
-    <text x="70" y="1061">chains) from scratch in Lisp — the trust chain is the source, not the</text>
-    <text x="70" y="1082">reputation.</text>
+    <text x="70" y="996">A dispatcher routes each problem to the cheapest COMPLETE method:</text>
+    <text x="70" y="1017">linear → Fourier-Motzkin (single-exponential); refutable → an SOS</text>
+    <text x="70" y="1038">certificate; only the genuinely hard nonlinear → CAD. Every branch</text>
+    <text x="70" y="1059">is complete, and a 50-problem cross-validation proves the verdict</text>
+    <text x="70" y="1080">equals the full decider's — speed that is proven not to cost</text>
+    <text x="70" y="1101">correctness. The doubly-exponential cost is paid only when forced.</text>
   </g>
 
-  <rect x="720" y="838" width="610" height="300" fill="#16120f" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1" rx="6"/>
-  <text x="744" y="868" fill="#e8c87a" font-size="15" letter-spacing="1">THIS ITERATION — FOUR BOUNDARIES CLOSED</text>
+  <rect x="720" y="878" width="610" height="300" fill="#16120f" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1" rx="6"/>
+  <text x="744" y="908" fill="#e8c87a" font-size="15" letter-spacing="1">THIS ITERATION — THE SOLVER, ALGORITHMICALLY COMPLETE</text>
   <g font-size="13.5" fill="#c8bda9">
-    <text x="744" y="895" fill="#dfeede">Irrational boundary sections.</text>
-    <text x="764" y="914">Sections on a surface like p² − 2 = 0 sampled at the exact</text>
-    <text x="764" y="932">algebraic point, decided in Q(√2). No longer rational-only.</text>
-    <text x="744" y="956" fill="#dfeede">Exact minimum cover.</text>
-    <text x="764" y="975">Branch-and-bound gives a provably minimal solution formula,</text>
-    <text x="764" y="993">not merely a greedy-good one.</text>
-    <text x="744" y="1017" fill="#dfeede">Dimension-independent UNSAT filter.</text>
-    <text x="764" y="1036">x² + 1 &lt; 0 refuted by a non-negativity certificate, no cells,</text>
-    <text x="764" y="1054">cost independent of the variable count. Sound one-way.</text>
-    <text x="744" y="1078" fill="#dfeede">The doubly-exponential cost — measured, not beaten.</text>
-    <text x="764" y="1097" fill="#9a8f80" font-size="12.5">3, 9, 27, 81 cells for k = 1..4: the Davenport–Heintz blow-up is a</text>
-    <text x="764" y="1113" fill="#9a8f80" font-size="12.5">theorem. Witness search and the UNSAT filter dodge it on the easy</text>
-    <text x="764" y="1129" fill="#9a8f80" font-size="12.5">half of instances in each direction; the worst case is inherent.</text>
+    <text x="744" y="936" fill="#dfeede">LBD clause deletion + conflict minimization (cdcl3).</text>
+    <text x="764" y="955">Glue clauses (LBD ≤ 2) kept, high-LBD discarded at restarts;</text>
+    <text x="764" y="973">learned clauses minimized by self-subsumption. Pure algorithm.</text>
+    <text x="744" y="997" fill="#dfeede">Every published technique that isn't low-level engineering.</text>
+    <text x="764" y="1016">Three solvers: simple reference, watched-literals, and now</text>
+    <text x="764" y="1034">LBD+minimization. All verified correct, models checked.</text>
+    <text x="744" y="1058" fill="#dfeede">The honest ceiling, measured — not competitive with C, by design.</text>
+    <text x="764" y="1077" fill="#9a8f80" font-size="12.5">Lizard does ~100k vector-ops/sec; winning C solvers ~50M props/sec</text>
+    <text x="764" y="1093" fill="#9a8f80" font-size="12.5">— a ~500×+ substrate gap, structural to a tree-walking interpreter.</text>
+    <text x="764" y="1109" fill="#9a8f80" font-size="12.5">Reference-quality: slow from the interpreter, not from missing method.</text>
+    <text x="744" y="1133" fill="#c9a85c" font-size="12.5">287 modules · 291 examples · 288 goldens · zero regressions</text>
+    <text x="744" y="1156" fill="#9a8f80" font-size="12">Next: richer SMT theories (difference logic, LIA); lizard foundations.</text>
   </g>
 
-  <line x1="70" y1="1152" x2="1330" y2="1152" stroke="#c9a85c" stroke-opacity="0.25" stroke-width="1"/>
-  <text x="70" y="1172" fill="#6f665d" font-size="12.5" font-style="italic">Comparison reflects public documentation of each system. sangaku is a research artifact prioritizing verifiability over scale; the others are mature, optimized tools. Doubly-exponential cost (Davenport-Heintz) is inherent to CAD, not to any one implementation.</text>
+  <line x1="70" y1="1196" x2="1330" y2="1196" stroke="#c9a85c" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="70" y="1214" fill="#6f665d" font-size="12.5" font-style="italic">Comparison reflects public documentation. sangaku is a research artifact prioritizing verifiability and completeness; the others are mature, optimized tools. The doubly-exponential wall is inherent to the problem, not to any implementation.</text>
 </svg>

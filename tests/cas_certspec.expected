@@ -1,0 +1,16 @@
+#t
+order
+#f
+Assumed ord_R : Sort(0)
+Assumed ord_zero : ord_R
+Assumed ord_one : ord_R
+Assumed ord_x : ord_R
+Assumed ord_add : (Pi (u : ord_R) (Pi (v : ord_R) ord_R))
+Assumed ord_mul : (Pi (u : ord_R) (Pi (v : ord_R) ord_R))
+Assumed ord_Ge : (Pi (u : ord_R) (Pi (v : ord_R) Sort(0)))
+Assumed ord_sq_nonneg : (Pi (y : ord_R) ((ord_Ge ((ord_mul #0) #0)) ord_zero))
+Assumed ord_one_nonneg : ((ord_Ge ord_one) ord_zero)
+Assumed ord_add_nonneg : (Pi (a : ord_R) (Pi (b : ord_R) (Pi (pa : ((ord_Ge #1) ord_zero)) (Pi (pb : ((ord_Ge #1) ord_zero)) ((ord_Ge ((ord_add #3) #2)) ord_zero)))))
+#t
+#t
+#f

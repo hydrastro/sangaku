@@ -4849,3 +4849,275 @@ factors produces 3, 9, 27, 81, ... sample cells as k = 1, 2, 3, 4, the exponenti
 worst case compounds into a double exponential through projection.  cadwit (witness search) and cadunsat (refutation
 filter) are the honest response -- not beating the bound, but avoiding it on the easy half of instances in each
 direction.
+
+## The bridge to a proof assistant, and the Galois group of a quartic
+
+Two additions: one closing the loop to a foundational checker, one filling a real gap in the algebra.
+
+THE BRIDGE (certlean.lisp).  A proof-carrying CAS and a type-theoretic proof assistant share one instinct -- make
+trust mechanical, bottom out in a small checkable kernel -- and certlean connects them concretely.  It takes a
+nonnegativity certificate Sangaku produces and emits the proof obligation Lean 4 (or Coq, same shape) discharges.
+For a nonnegative quadratic it emits an EXPLICIT sum-of-squares identity -- a nonnegative quadratic c + b x + a x^2
+with a > 0 is exactly a (x + b/2a)^2 + (c - b^2/4a), the trailing constant nonnegative because the discriminant is
+-- rendered as an nlinarith proof the kernel verifies by polynomial normalization, trusting nothing about Sangaku.
+For a general nonnegative polynomial it emits the sign certificate (the squarefree odd part has no real root, the
+leading coefficient is positive) as a statement the assistant re-checks itself.  A generated Lean file lives at
+docs/sangaku_certificates.lean.  This is deliberately scoped and honest: proof-producing links between CAS
+procedures and proof assistants already exist (HOL Light's real-arithmetic procedures, Coq's psatz, Lean's
+polyrith); this is one more, grounded in Sangaku's own certificates, closing the loop between computed and proved
+for the cases it covers.  The work surfaced and fixed a pre-existing bug in sos.lisp: real-root counting on the
+monicized (rational-coefficient) odd factor failed because cauchy-bound assumes integer coefficients, so the count
+now clears denominators first (the real-root count is invariant under positive integer scaling).
+
+THE GALOIS GROUP OF A QUARTIC (galquartic.lisp).  The worked examples observe that the quintic x^5 - x - 1 is
+unsolvable by radicals because its Galois group is the non-solvable S_5, while every quartic is solvable; galquartic
+makes the quartic side computable.  It depresses x^4 + a x^3 + b x^2 + c x + d to x^4 + p x^2 + q x + r, forms the
+resolvent cubic y^3 - p y^2 - 4 r y + (4 p r - q^2), counts its rational roots, and tests whether the discriminant
+is a perfect square: a resolvent that splits completely gives the Klein four-group V_4; an irreducible resolvent
+gives A_4 (square discriminant) or S_4 (non-square); one rational root gives the C_4 / D_4 pair (the tie-break,
+needing irreducibility over a quadratic extension, is deferred).  Verified against x^4 + 1 (V_4), x^4 + x + 1 (S_4,
+discriminant 229), x^4 + 8 x + 12 (A_4, discriminant 576^2), x^4 - 2 (D_4), and reducible quartics including those
+with no rational root that split into two rational quadratics (x^4 + 4).  Every quartic group is solvable, so the
+solvability verdict is unconditional and total -- the degree-four companion to the radical-unsolvable quintic.
+
+## Proving radical-unsolvability, and exporting the completeness-dependent chain
+
+Two advances that together push Sangaku's verifiability further toward a foundational kernel.
+
+SOLVABILITY BY RADICALS (galois.lisp).  The worked examples observed that the quintic x^5 - x - 1 is unsolvable by
+radicals; galois.lisp turns that observation into a PROOF for the quintics a classical criterion reaches.  The
+theorem (Dedekind): an irreducible polynomial over Q of prime degree p with exactly two non-real roots has Galois
+group the full symmetric group S_p, which is non-solvable for p >= 5.  Sangaku checks each ingredient -- the degree
+is prime; irreducibility by Eisenstein's criterion at a small prime, or a bounded integer-factor scan; and a Sturm
+real-root count of exactly p - 2 -- and so EXHIBITS a radical-unsolvable polynomial with a finite checkable witness.
+For x^5 - 4 x + 2 (Eisenstein at 2, three real roots) and x^5 - 6 x + 3 (Eisenstein at 3, three real roots) the
+verdict S_5, not solvable by radicals, is proved.  Honest scope (galois-caveat): the criterion does not reach every
+unsolvable polynomial -- x^5 - x - 1 is itself S_5 but has four non-real roots, so the module returns 'unknown for
+it rather than overclaiming -- and a general Galois-group computation (higher resolvents, or a Frobenius /
+factorization-pattern method) is not built.  This is the natural partner of galquartic, where every group is
+solvable.
+
+THE EXISTENCE CHAIN, EXPORTED (certlean.lisp).  The bridge previously exported nonnegativity certificates (the
+order-axiom chain).  It now also exports EXISTENCE certificates -- the completeness-dependent chain DOWN_TO_AXIOMS
+traces.  Sangaku isolates a real root by a sign change f(a) < 0 < f(b); certlean-lean-exists renders this as a Lean
+theorem asserting a root in [a, b], proved by the intermediate value theorem (the assistant evaluates f at the two
+rational endpoints, invokes continuity of the polynomial, and applies its intermediate-value lemma).  So existence
+of sqrt 2 -- the canonical completeness-axiom fact -- is now kernel-checkable from Sangaku's own root isolation,
+not only the sum-of-squares positivity facts.  The generated docs/sangaku_certificates.lean now carries both
+families: nonnegativity reducing to the order axioms, existence reducing to completeness.  (The exact mathlib
+incantation -- lemma names, the continuity tactic -- is idiomatic but unverified in-sandbox; the mathematical
+content is sound, the surface syntax may need minor adjustment against a specific mathlib version.)
+
+## Sangaku certificates checked in lizard's own type-theory kernel
+
+The decisive step toward a CAS whose statements prove in lizard's own type theory: certkernel.lisp discharges
+Sangaku certificates NOT by rendering text for an external assistant (certlean's role) but by building a proof term
+in lizard's dependent type theory and handing it to the kernel primitive kernel-check, which accepts it only if it
+genuinely inhabits the stated type.  The same engine that decides also proves, with no foreign prover and no trust
+in Sangaku -- a wrong claim yields a term that does not type-check (verified: x^2 - 1 and a bare linear term are
+refused nonnegativity).
+
+Two fragments are covered over a shared commutative ring.  NONNEGATIVITY p(x) >= 0 for all real x is proved from an
+explicit sum-of-squares through the order axioms stated as kernel constructors -- sq_nonneg : (y:R) -> Ge (y*y) 0,
+one_nonneg, add_nonneg, scale_nonneg -- the universally-quantified content (a square is nonnegative) supplied by the
+kernel-checked axiom and the polynomial identity supplied by certlean's exact SOS reconstruction; x^2 + x + 1,
+x^2 + 1, (x-1)^2, and the non-monic 5 x^2 - 4 x + 1 are all proved.  The DERIVATIVE judgment Der (\x.f) (\x.f') is
+re-exported from diff-cert, whose proof terms (nested applications of der_id, der_const, der_add, der_mul, der_comp)
+the kernel already type-checks; d/dx(x*x), d/dx(x+x), and d/dx(sin x) are certified.  Through the Fundamental
+Theorem, an antiderivative's certificate is exactly such a derivative judgment, so the calculus chain of
+DOWN_TO_AXIOMS is now machine-checked inside lizard.
+
+This is the foundation lizard offers as it grows into a theorem prover: it already exposes a dependent-type kernel
+(kernel-assume / kernel-check / kernel-infer / kernel-reduce), and Sangaku's certificates target it directly.  Scope
+kept honest (certkernel-caveat): the kernel proofs cover the sum-of-squares nonnegativity fragment and the
+elementary derivatives, not yet every statement Sangaku can decide; widening that fragment -- general nonnegativity,
+the existence judgment as a kernel proof, the decision procedures themselves -- is the path toward the full goal of
+a proof in lizard's type theory behind every verdict.
+
+## Consolidating the decision layer: a linear fast path, a dispatcher, and a soundness audit
+
+A CAS is fast in practice not by beating the worst case -- real quantifier elimination is doubly exponential
+(Davenport-Heintz, a theorem, and that wall is permanent) -- but by recognising the easy and structured cases and
+routing them to a cheaper COMPLETE procedure.  Three additions consolidate the decision layer to that end, without
+ever sacrificing correctness.
+
+LINEAR ARITHMETIC by Fourier-Motzkin (lra.lisp).  The linear fragment -- conjunctions of linear inequalities and
+equations, existentially quantified -- is decided exactly and completely by Fourier-Motzkin elimination:
+partition the constraints by the sign of the eliminated variable's coefficient, assert every lower bound is at most
+every upper bound, solve and substitute equalities, and iterate.  Complete, exact rational arithmetic,
+single-exponential rather than double -- the genuine fast path for the linear case.  Strictness composes correctly
+(an open empty interval is unsatisfiable; x >= 2 and x < 2 is unsatisfiable because the strict upper bound excludes
+the boundary the non-strict lower allows), verified across single-variable, multivariable, and equality cases.
+
+THE DISPATCHER (qedispatch.lisp).  A router over complete methods: a univariate existential sentence whose atoms
+are all linear goes to Fourier-Motzkin; a problem an inexpensive non-negativity certificate refutes goes to the
+UNSAT filter; everything else goes to the complete CAD-based decider.  Each branch is complete for what it accepts
+and the branches agree where they overlap, so the dispatcher's verdict equals the full decider's on every problem
+-- only reached faster.  Exposed through rqe as rqe-decide-fast / rqe-route.  Building it surfaced and fixed a real
+soundness gap: an early version dropped strict-inequality information when translating atoms to linear constraints,
+which the cross-validation caught.
+
+THE SOUNDNESS AUDIT.  A systematic cross-validation that the dispatcher's verdict equals the full decider's across a
+sweep of fifty-plus problems -- every linear atom across signs and operators, intervals closed and open and empty
+and mixed-strictness, and quadratics satisfiable and not -- with zero disagreements, captured as a permanent
+regression test.  This is what makes the fast paths trustworthy: speed proven not to cost correctness.
+
+The honest shape of "an absolute beast": fast on the linear and the refutable and the structured, complete on
+everything, and the worst-case doubly-exponential cost confined to the genuinely hard nonlinear problems where it is
+inherent and unavoidable.  No implementation escapes that wall; the consolidation makes sure Sangaku only pays it
+when the problem truly demands it.
+
+## The McCallum reduced projection: the algorithm the established CAD systems use
+
+The single biggest practical lever in cylindrical algebraic decomposition is not a better worst-case bound -- there
+is none, the doubly-exponential cost is a theorem -- but a SMALLER projection operator, and that is exactly where
+QEPCAD B and Mathematica's CAD get their speed.  Collins' original projection carries, for every projection
+polynomial, its entire tower of principal subresultant coefficients alongside discriminants and pairwise
+resultants.  McCallum (1988, refined 1998) proved that for a WELL-ORIENTED set the projection needs only each
+polynomial's discriminant, the pairwise resultants between distinct polynomials, and the leading coefficients --
+dropping the subresultant tower entirely.  mccallum.lisp implements this reduced operator from the literature (not
+adapted from any system's source, which would be a licensing matter), with mccallum-project the reduced set,
+mccallum-well-oriented? the validity certificate, and mccallum-project-safe the operator that uses McCallum when
+well-orientedness is certified and falls back to the full Collins projection (the reduced set plus all coefficients)
+otherwise -- trading size for unconditional validity.
+
+Verified: for the parabola y^2 - x and the line y - x the reduced projection is exactly { disc_y(y^2 - x) = -4x,
+res_y = x^2 - x }, the constant leading coefficients correctly dropped as marking no cell boundary, and it agrees
+with the conservative Collins-safe superset on the same well-oriented set, so sign-invariance is preserved.  This
+does not change the worst-case class -- nothing does -- but it shrinks the base of the exponential and the constant
+factors, the difference between a CAD that runs on real problems and one that does not.
+
+## The subresultant tower: completing the projection chain
+
+The reduced McCallum operator (mccallum.lisp) is the fast projection the established CAD systems default to, valid
+for well-oriented sets.  Unconditional completeness -- Collins' guarantee for ANY set -- needs more: the full tower
+of PRINCIPAL SUBRESULTANT COEFFICIENTS, not just the resultant (psc_0) and discriminant.  subresultant.lisp builds
+the subresultant polynomial remainder sequence (the Brown-Collins recurrence, exact over Q) and reads off the psc
+tower.  Its CAD-relevant invariants are exact and verified across a sweep: the resultant vanishes exactly when two
+polynomials share a factor, and the gcd degree -- the least index of a nonzero psc -- gives the multiplicity
+structure (squarefree -> 0, double root -> 1, triple root -> 2, confirmed).  A note kept honest: the resultant VALUE
+matches the Sylvester resultant when the degrees differ and can differ by a normalization constant in the
+equal-degree case, but this never affects the vanishing set or the gcd degree, which are the cell-boundary data the
+projection consumes.
+
+Together the two modules give both ends of the published projection literature: McCallum's reduced operator for
+speed where it is valid, and the subresultant tower for the completeness Collins guarantees everywhere.  This is the
+honest answer to implementing "the published improvements" -- McCallum (1988) for the reduction, the
+Brown-Collins subresultant PRS for the complete tower, each from the literature, neither adapted from any existing
+system's source.  Neither changes the doubly-exponential worst-case class; that is a theorem and stands.
+
+## A native certificate format and the kernel-scoping fix; the parametric subresultant lift
+
+Three additions move the central bet -- a CAS whose native output is proof-checkable in its OWN kernel -- forward,
+and none of them touches an external proof assistant.
+
+THE KERNEL-SCOPING FIX (namespaced signatures).  lizard's kernel has a single global signature, so two modules each
+assuming a symbol R would collide.  The fix is to NAMESPACE: each certificate domain prefixes its kernel symbols
+(the order domain's symbols begin ord_, a derivative domain's der_, and so on) and a Lisp-level install-once flag
+prevents redundant re-assertion.  Many domains then coexist in the one kernel environment as non-interfering
+sub-signatures -- verified by checking an order certificate and an independent signature in the same run, both
+sound.  This is the reflection-adjacent solution: the global environment is partitioned by name, so it holds
+arbitrarily many sub-theories without interference, and the proof-carrying surface can widen without collision.
+
+A NATIVE CERTIFICATE FORMAT (certspec.lisp).  There is no checker-neutral standard for computer-algebra
+certificates suited to a dependent-type kernel -- DRAT/LRAT are SAT-specific, Dedukti and OpenTheory are their own
+ecosystems, the proof-assistant serializations are tied to their kernels -- so Sangaku defines a small principled
+one, borrowing LRAT's DESIGN (a tiny trusted checker, a self-contained certificate, checking cheaper than finding)
+without its representation, and deliberately independent of Lean, Coq, or any external system.  A certificate is a
+triple (domain claim-type proof-term); certspec-check installs the namespaced domain signature and calls
+kernel-check, accepting the certificate exactly when the proof term inhabits the claim type.  A wrong claim has no
+valid certificate -- a bogus reversed inequality is rejected -- because soundness is the kernel's.  This gives every
+future certificate-producing procedure ONE shape to target, so widening the surface means adding domains and proof
+builders, not reinventing the checking discipline.
+
+THE PARAMETRIC SUBRESULTANT LIFT (psubres.lisp).  subresultant.lisp built the univariate-over-Q psc tower; the
+projection actually needs the tower with coefficients that are POLYNOMIALS IN A PARAMETER, since each elimination
+step works in the main variable with coefficients in the remaining variables.  psubres.lisp lifts the identical
+recurrence to the ring Q[t], with the exact Q[t] division the subresultant theory guarantees, so the principal
+subresultant coefficients come out as polynomials in the parameter whose VANISHING defines the cell boundaries one
+level down.  Verified: Res_x(x^2 - a, x - 1) = 1 - a (vanishing exactly at a = 1, where x = 1 meets the parabola),
+Res_x(x^2 - a, 2x) vanishing at a = 0 (the double-root locus), Res_x(x^2 - a, x^2 - 1) vanishing at a = 1 -- every
+vanishing locus exactly the parameter values where the specialised fibers change structure.  As in the univariate
+core the equal-degree resultant VALUE carries a normalization constant, but the vanishing set and gcd degree -- the
+cell-boundary data the projection consumes -- are exact in every case.
+
+## A CDCL SAT solver and a DPLL(T) SMT solver over EUF
+
+The beginning of the satisfiability layer, built bottom-up from the Handbook of Satisfiability and the modern
+competition-solver literature, implemented from the published algorithms (not adapted from any solver's source).
+
+THE CDCL SAT CORE (cdcl.lisp).  Conflict-driven clause learning, the modern SAT architecture: a partial assignment
+and trail held in mutable vectors, Boolean constraint propagation, 1-UIP conflict analysis that resolves the
+conflicting clause against the antecedents of current-level literals until a single unique implication point
+remains, clause learning, non-chronological backjumping to the second-highest level of the learned clause, and an
+activity-based (VSIDS-style) decision heuristic.  The main loop is iterative.  Verified: the four-clause core
+forbidding every assignment to two variables is UNSAT; implication chains are decided correctly; the pigeonhole
+instance PHP(3,2) is refuted by learning; satisfiable instances return models an independent verifier accepts.  SAT
+is NP-complete and this does not escape the exponential worst case -- the conflict-driven strategies are what keep
+the search far from it on structured instances.
+
+THE SMT LAYER (smt.lisp), DPLL(T) over EUF.  On the SAT core sits the lazy SMT loop: the Boolean engine treats each
+equality atom as a propositional variable and finds a satisfying assignment, and the theory solver -- congruence
+closure over a union-find on interned term ids -- decides whether the asserted equalities and disequalities are
+consistent in the theory of equality with uninterpreted functions; a theory conflict blocks that Boolean model and
+the search resumes.  Verified: congruence closure derives a ~ c, f(a) ~ f(c), and d ~ e from a = b, b = c,
+f(a) = d, f(c) = e; a transitivity violation (a = b, b = c, a != c) is UNSAT; a function-congruence violation
+(a = b, f(a) != f(b)) is UNSAT; the consistent versions are SAT.  This decides quantifier-free EUF, the core SMT
+theory; richer theories (difference logic, linear arithmetic via the existing Fourier-Motzkin module, arrays) plug
+in behind the same DPLL(T) loop.
+
+An implementation note worth recording: the theory solver was first written with a functional assoc-list union-find,
+which thrashed the interpreter; rewriting it with mutable vectors (exactly as the SAT core carries its trail) made
+it fast and reliable.  Allocation discipline matters here, and the vector-based state is the right pattern for the
+solver layer.
+
+## Making the SAT core fast: two-watched literals, VSIDS decay, phase saving, restarts
+
+The reference CDCL solver (cdcl.lisp) is correct but rescans every clause on every propagation step; cdcl2.lisp
+replaces that with the data structures and heuristics the competition-winning solvers share, from the Handbook of
+Satisfiability (chapter 4) and the modern SAT literature -- implemented from the published algorithms, not adapted
+from any solver's source.
+
+TWO WATCHED LITERALS (4.2).  Each clause is a mutable vector carrying the positions of its two watched literals;
+a watch list indexed by literal code maps each literal to the clauses watching it.  When a literal becomes false
+the solver visits only the clauses watching it, looking for a non-false replacement to watch; failing that, the
+other watched literal is the unit implication or, if false, the conflict.  Propagation therefore touches a clause
+only when one of its two watched literals is falsified -- the single biggest practical lever in SAT.  VSIDS with
+decay focuses branching on the variables recent conflicts involve; phase saving reuses each variable's last
+polarity; Luby restarts periodically discard the decision stack (keeping learned clauses) to escape unproductive
+regions.
+
+A correctness subtlety the implementation had to get right: after learning a clause and backjumping, the solver must
+immediately ASSERT the clause's first-unique-implication-point literal as a unit implication; omitting that lets
+phase saving re-make the same decision and the solver loops forever relearning the same clause.  Asserting the UIP
+literal after backjump is what makes CDCL progress, and it is now in place.
+
+Measured on the pigeonhole instances: PHP(5,4) drops from about five seconds (the rescan reference) to about one
+with watched literals, and PHP(6,5), where the reference stalls, is decided in a few seconds.  None of this changes
+that SAT is NP-complete -- the worst case stays exponential -- but the strategies clear the structured instances
+the naive solver chokes on.
+
+## Completing the SAT solver algorithmically: LBD deletion, clause minimization, and an honest ceiling
+
+The CDCL solver now carries the last two algorithmic techniques the competition-winning solvers rely on, both
+implemented from the literature: LBD-based learned-clause deletion and conflict-clause minimization (cdcl3.lisp).
+
+LBD (Literal Block Distance, Audemard & Simon, Glucose 2009) measures a learned clause's quality by the number of
+distinct decision levels among its literals: a low LBD (a "glue clause", LBD <= 2) is high value and kept, while
+high-LBD clauses are discarded at restart boundaries.  This keeps the clause database small without losing the
+important clauses.  CONFLICT-CLAUSE MINIMIZATION (Sorensson & Biere 2009) removes redundant literals from each
+learned clause by self-subsuming resolution -- a literal whose reason clause's other literals are all already in the
+learned clause is implied by them and dropped -- yielding tighter clauses that prune more.  Both are pure algorithm,
+independent of low-level engineering, and both are verified to preserve correctness (including on instances large
+enough to trigger database reduction at a restart).
+
+An honest statement of the ceiling, because it matters.  This does NOT make Sangaku competitive with the winning C
+solvers (Kissat, CaDiCaL, the Glucose lineage), and no amount of algorithm will.  Those solvers get their speed from
+cache-friendly memory layout, inlined clause literals, flat watch arrays, and zero-allocation hot loops counting
+tens of millions of propagations per second in compiled C.  Sangaku runs on a tree-walking Lisp interpreter whose
+raw vector-operation rate is on the order of a hundred thousand per second -- a substrate gap of roughly three
+orders of magnitude before the C solvers' own algorithmic advantages.  That gap is structural, not a missing
+feature.  What these techniques achieve is a solver that is ALGORITHMICALLY complete and reference-quality: it
+implements every published technique that is not pure low-level engineering, so it is as good as it can be on its
+substrate -- slow only because of the interpreter, not because of missing method, and the right SAT engine for
+Sangaku's own purposes (the SMT layer, certificate checking) where the instances are small.

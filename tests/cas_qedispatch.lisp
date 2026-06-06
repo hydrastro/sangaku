@@ -1,0 +1,8 @@
+(import "cas/qedispatch.lisp")
+(display (qedispatch-route (list (quote and) (cons (quote nonneg) (list -1 1)) (cons (quote nonneg) (list 3 -1))))) (newline)
+(display (qedispatch-route (cons (quote neg) (list 1 0 1)))) (newline)
+(display (qedispatch-route (cons (quote zero) (list -2 0 1)))) (newline)
+(display (qedispatch-decide (list (quote and) (cons (quote gt) (list -2 1)) (cons (quote gt) (list 2 -1))))) (newline)
+(display (qedispatch-decide (cons (quote neg) (list 1 0 1)))) (newline)
+(display (qedispatch-decide (cons (quote zero) (list -2 0 1)))) (newline)
+(display (qedispatch-decide (cons (quote nonneg) (list 0 0 1)))) (newline)

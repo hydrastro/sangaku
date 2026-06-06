@@ -1,0 +1,8 @@
+(import "cas/mccallum.lisp")
+(define p1 (list (list (cons -1 (list 1))) (quote ()) (list (cons 1 (list 0)))))
+(define p2 (list (list (cons -1 (list 1))) (list (cons 1 (list 0)))))
+(display (mccallum-well-oriented? (list p1 p2))) (newline)
+(display (mccallum-project (list p1 p2))) (newline)
+(display (mc-len (mccallum-project (list p1 p2)))) (newline)
+(display (equal? (mccallum-project (list p1 p2)) (mccallum-project-safe (list p1 p2)))) (newline)
+(display (mccallum-leading (list p1 p2))) (newline)
