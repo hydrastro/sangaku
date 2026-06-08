@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1104" viewBox="0 0 1180 1104" font-family="Georgia, 'Times New Roman', serif">
+<rect width="1180" height="1104" fill="#0f1418"/>
+<rect x="8" y="8" width="1164" height="1088" fill="none" stroke="#3a4550" stroke-width="1.5"/>
+<rect x="14" y="14" width="1152" height="1076" fill="none" stroke="#27313a" stroke-width="0.8"/>
+<text x="590" y="62" text-anchor="middle" fill="#e8c87a" font-size="30" letter-spacing="3">LIZARD — THE CUBICAL KERNEL TOWER</text>
+<text x="590" y="92" text-anchor="middle" fill="#9a8f80" font-size="15" letter-spacing="1">computational univalence machinery brought into the trusted dependent-type kernel, one provably-sound rule at a time</text>
+<text x="590" y="116" text-anchor="middle" fill="#7e8a96" font-size="13" letter-spacing="1">each row: a new kernel term former with a short type-preservation proof and a direct soundness-test guard (build ill-typed term, assert rejection)</text>
+<line x1="60" y1="140" x2="1120" y2="140" stroke="#c9a85c" stroke-width="0.8" opacity="0.5"/>
+<text x="590" y="166" text-anchor="middle" fill="#c9a85c" font-size="13" letter-spacing="4">算 額   ·   SANGAKU   ·   a votive tablet of results, each one verified before it is hung</text>
+<text x="64" y="228" fill="#8fa0ad" font-size="13" letter-spacing="2">RULE</text>
+<text x="392" y="228" fill="#8fa0ad" font-size="13" letter-spacing="2">KERNEL EQUATION</text>
+<text x="1030" y="228" fill="#8fa0ad" font-size="13" letter-spacing="2">SOUNDNESS</text>
+<line x1="60" y1="238" x2="1120" y2="238" stroke="#3a4550" stroke-width="1"/>
+<rect x="60" y="240" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="268" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="272" text-anchor="middle" fill="#e8c87a" font-size="12">1</text>
+<text x="100" y="273" fill="#dfeede" font-size="15.5">ua typing</text>
+<text x="392" y="267" fill="#cdbf9a" font-size="13">Equiv A B : Sort;  ua e : Id (Sort) A B</text>
+<text x="392" y="283" fill="#7e8a96" font-size="11.5">the univalence axiom, as a typing judgment</text>
+<text x="1030" y="273" fill="#c9a85c" font-size="14">69/0</text>
+<text x="1084" y="273" fill="#5f6b76" font-size="12">+5</text>
+<circle cx="78" cy="314" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="318" text-anchor="middle" fill="#e8c87a" font-size="12">2</text>
+<text x="100" y="319" fill="#dfeede" font-size="15.5">transp (constant)</text>
+<text x="392" y="313" fill="#cdbf9a" font-size="13">transp &lt;i&gt;A a = a  when the line is constant</text>
+<text x="392" y="329" fill="#7e8a96" font-size="11.5">transport along a constant line is identity</text>
+<text x="1030" y="319" fill="#c9a85c" font-size="14">71/0</text>
+<text x="1084" y="319" fill="#5f6b76" font-size="12">+2</text>
+<rect x="60" y="332" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="360" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="364" text-anchor="middle" fill="#e8c87a" font-size="12">3</text>
+<text x="100" y="365" fill="#dfeede" font-size="15.5">transp at Sigma</text>
+<text x="392" y="359" fill="#cdbf9a" font-size="13">transp &lt;i&gt;(Sigma A(i) B(i)) (a,b) = (transp a, transp b)</text>
+<text x="392" y="375" fill="#7e8a96" font-size="11.5">componentwise on non-dependent products</text>
+<text x="1030" y="365" fill="#c9a85c" font-size="14">76/0</text>
+<text x="1084" y="365" fill="#5f6b76" font-size="12">+5</text>
+<circle cx="78" cy="406" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="410" text-anchor="middle" fill="#e8c87a" font-size="12">4</text>
+<text x="100" y="411" fill="#dfeede" font-size="15.5">transp at Sum</text>
+<text x="392" y="405" fill="#cdbf9a" font-size="13">transp &lt;i&gt;(A(i)+B(i)) (inl a) = inl (transp a)</text>
+<text x="392" y="421" fill="#7e8a96" font-size="11.5">pushes inside the constructor</text>
+<text x="1030" y="411" fill="#c9a85c" font-size="14">80/0</text>
+<text x="1084" y="411" fill="#5f6b76" font-size="12">+4</text>
+<rect x="60" y="424" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="452" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="456" text-anchor="middle" fill="#e8c87a" font-size="12">5</text>
+<text x="100" y="457" fill="#dfeede" font-size="15.5">transp at Pi</text>
+<text x="392" y="451" fill="#cdbf9a" font-size="13">transp &lt;i&gt;(Pi A(i) B(i)) f = lam x. transp (f (transp~ x))</text>
+<text x="392" y="467" fill="#7e8a96" font-size="11.5">both constant- and varying-domain, via negation</text>
+<text x="1030" y="457" fill="#c9a85c" font-size="14">80/0</text>
+<text x="1084" y="457" fill="#5f6b76" font-size="12">·</text>
+<circle cx="78" cy="498" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="502" text-anchor="middle" fill="#e8c87a" font-size="12">6</text>
+<text x="100" y="503" fill="#dfeede" font-size="15.5">interval negation</text>
+<text x="392" y="497" fill="#cdbf9a" font-size="13">~i0=i1,  ~i1=i0,  ~~r=r</text>
+<text x="392" y="513" fill="#7e8a96" font-size="11.5">the de Morgan involution on the interval</text>
+<text x="1030" y="503" fill="#c9a85c" font-size="14">86/0</text>
+<text x="1084" y="503" fill="#5f6b76" font-size="12">+6</text>
+<rect x="60" y="516" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="544" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="548" text-anchor="middle" fill="#e8c87a" font-size="12">7</text>
+<text x="100" y="549" fill="#dfeede" font-size="15.5">identity equivalence</text>
+<text x="392" y="543" fill="#cdbf9a" font-size="13">id-equiv A : Equiv A A,  composes with ua</text>
+<text x="392" y="559" fill="#7e8a96" font-size="11.5">the trivial equivalence, kernel-side</text>
+<text x="1030" y="549" fill="#c9a85c" font-size="14">90/0</text>
+<text x="1084" y="549" fill="#5f6b76" font-size="12">+4</text>
+<circle cx="78" cy="590" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="594" text-anchor="middle" fill="#e8c87a" font-size="12">8</text>
+<text x="100" y="595" fill="#dfeede" font-size="15.5">hcomp (empty)</text>
+<text x="392" y="589" fill="#cdbf9a" font-size="13">hcomp A u0 = u0</text>
+<text x="392" y="605" fill="#7e8a96" font-size="11.5">empty-system homogeneous composition</text>
+<text x="1030" y="595" fill="#c9a85c" font-size="14">94/0</text>
+<text x="1084" y="595" fill="#5f6b76" font-size="12">+4</text>
+<rect x="60" y="608" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="636" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="640" text-anchor="middle" fill="#e8c87a" font-size="12">9</text>
+<text x="100" y="641" fill="#dfeede" font-size="15.5">cofibrations + hcomp1</text>
+<text x="392" y="635" fill="#cdbf9a" font-size="13">hcomp1 A (cofib r b) u u0  — single face</text>
+<text x="392" y="651" fill="#7e8a96" font-size="11.5">compatibility check: u=u0 on the face</text>
+<text x="1030" y="641" fill="#c9a85c" font-size="14">101/0</text>
+<text x="1084" y="641" fill="#5f6b76" font-size="12">+7</text>
+<circle cx="78" cy="682" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="686" text-anchor="middle" fill="#e8c87a" font-size="12">10</text>
+<text x="100" y="687" fill="#dfeede" font-size="15.5">hcomp2 (overlap)</text>
+<text x="392" y="681" fill="#cdbf9a" font-size="13">hcomp2 ... — two faces, the overlap lattice</text>
+<text x="392" y="697" fill="#7e8a96" font-size="11.5">u1=u2 where both faces hold — order made sound</text>
+<text x="1030" y="687" fill="#c9a85c" font-size="14">107/0</text>
+<text x="1084" y="687" fill="#5f6b76" font-size="12">+6</text>
+<rect x="60" y="700" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="728" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="732" text-anchor="middle" fill="#e8c87a" font-size="12">11</text>
+<text x="100" y="733" fill="#dfeede" font-size="15.5">Glue type + boundary</text>
+<text x="392" y="727" fill="#cdbf9a" font-size="13">Glue A (cofib r b) T e : Sort;  = T on the face</text>
+<text x="392" y="743" fill="#7e8a96" font-size="11.5">the type former univalence is built from</text>
+<text x="1030" y="733" fill="#c9a85c" font-size="14">116/0</text>
+<text x="1084" y="733" fill="#5f6b76" font-size="12">+9</text>
+<circle cx="78" cy="774" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="778" text-anchor="middle" fill="#e8c87a" font-size="12">12</text>
+<text x="100" y="779" fill="#dfeede" font-size="15.5">equiv-fun + unglue</text>
+<text x="392" y="773" fill="#cdbf9a" font-size="13">equiv-fun e : T-&gt;A;  unglue lands in A</text>
+<text x="392" y="789" fill="#7e8a96" font-size="11.5">the equivalence computes; id round-trips</text>
+<text x="1030" y="779" fill="#c9a85c" font-size="14">116/0</text>
+<text x="1084" y="779" fill="#5f6b76" font-size="12">·</text>
+<rect x="60" y="792" width="1060" height="46" fill="#141b21" opacity="0.6"/>
+<circle cx="78" cy="820" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="824" text-anchor="middle" fill="#e8c87a" font-size="12">13</text>
+<text x="100" y="825" fill="#dfeede" font-size="15.5">Glue transp (empty)</text>
+<text x="392" y="819" fill="#cdbf9a" font-size="13">transp over an empty-face Glue line -&gt; transp in A</text>
+<text x="392" y="835" fill="#7e8a96" font-size="11.5">the degenerate Glue transport slice</text>
+<text x="1030" y="825" fill="#c9a85c" font-size="14">119/0</text>
+<text x="1084" y="825" fill="#5f6b76" font-size="12">+3</text>
+<circle cx="78" cy="866" r="11" fill="none" stroke="#c9a85c" stroke-width="1"/>
+<text x="78" y="870" text-anchor="middle" fill="#e8c87a" font-size="12">14</text>
+<text x="100" y="871" fill="#dfeede" font-size="15.5">Glue transp (held)</text>
+<text x="392" y="865" fill="#cdbf9a" font-size="13">transp over a held-face Glue line -&gt; transp in T</text>
+<text x="392" y="881" fill="#7e8a96" font-size="11.5">the regularity slice — THIS ITERATION</text>
+<text x="1030" y="871" fill="#c9a85c" font-size="14">121/0</text>
+<text x="1084" y="871" fill="#5f6b76" font-size="12">+2</text>
+<line x1="60" y1="910" x2="1120" y2="910" stroke="#3a4550" stroke-width="1"/>
+<text x="64" y="932" fill="#b5734a" font-size="14" letter-spacing="1">THE NAMED FRONTIER (not faked):</text>
+<text x="64" y="954" fill="#9a8f80" font-size="13">general varying-face Glue transp — needs the equivalence inverse + is-equiv coherence + comp</text>
+<text x="64" y="974" fill="#6f7a86" font-size="12">its bugs are silent — a wrong inhabitant, not a type error — so it is approached as its own provable, guarded brick, never dropped in whole.</text>
+<line x1="60" y1="996" x2="1120" y2="996" stroke="#c9a85c" stroke-width="0.8" opacity="0.5"/>
+<text x="590" y="1022" text-anchor="middle" fill="#e8c87a" font-size="15">kernel soundness  64/0  →  121/0   ·   14 new cubical term formers   ·   zero regressions   ·   clean C89 build, verified from a fresh extract</text>
+<text x="590" y="1044" text-anchor="middle" fill="#7e8a96" font-size="12.5">baseline = github/hydrastro/lizard (no cubical-computation machinery in its kernel) · the entire tower above is additive to the shared ancestor</text>
+</svg>

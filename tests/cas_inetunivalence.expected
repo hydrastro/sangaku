@@ -1,0 +1,251 @@
+Assumed A : Sort(0)
+=> #t
+Assumed A1 : Sort(0)
+=> #t
+Assumed B : Sort(0)
+=> #t
+Assumed B1 : Sort(0)
+=> #t
+Assumed PA : (Path Sort(0) A A1)
+=> #t
+Assumed PB : (Path Sort(0) B B1)
+=> #t
+Assumed f : (Pi (x : A) B)
+=> #t
+#t
+#t
+#t
+#t
+#t
+Assumed aa : A
+=> #t
+#t
+#t
+Assumed uu : A
+=> #t
+Assumed uu2 : A
+=> #t
+#t
+#t
+#t
+Assumed w0 : A
+=> #t
+Assumed w1 : A
+=> #t
+#t
+#t
+Assumed Tg : Sort(0)
+=> #t
+Assumed eg : (Equiv Tg A)
+=> #t
+Assumed ag : A
+=> #t
+#t
+#t
+#t
+#t
+#t
+#t
+Assumed Th : Sort(0)
+=> #t
+Assumed eh : (Equiv Th A)
+=> #t
+Assumed th : Th
+=> #t
+#t
+#t
+Assumed Tk : Sort(0)
+=> #t
+Assumed ek : (Equiv Tk A)
+=> #t
+Assumed g0k : A
+=> #t
+#t
+#t
+#f
+#t
+#t
+Error: user-raised
+Assumed Te : Sort(0)
+=> #t
+Assumed ee : (Equiv Te A)
+=> #t
+Assumed g0e : A
+=> #t
+#t
+#t
+Assumed g0h : A
+=> #t
+#t
+Assumed Qx : Sort(0)
+=> #t
+Assumed Qy : Sort(0)
+=> #t
+Assumed PQx : (Path Sort(0) Qx Qy)
+=> #t
+Assumed ppx : A
+=> #t
+Assumed qqx : Qx
+=> #t
+#t
+Assumed Rz : Sort(0)
+=> #t
+Assumed eRz : (Equiv Rz A)
+=> #t
+Assumed rz : Rz
+=> #t
+#t
+Assumed Cz0 : Sort(0)
+=> #t
+Assumed Cz1 : Sort(0)
+=> #t
+Assumed CPAz : (Path Sort(0) Cz0 Cz1)
+=> #t
+Assumed czx : Cz0
+=> #t
+#t
+#t
+Assumed DSa0 : Sort(0)
+=> #t
+Assumed DSa1 : Sort(0)
+=> #t
+Assumed DSPA : (Path Sort(0) DSa0 DSa1)
+=> #t
+Assumed dsa : DSa0
+=> #t
+Assumed dsb : (Id DSa0 dsa dsa)
+=> #t
+#t
+#t
+#t
+Assumed IVa0 : Sort(0)
+=> #t
+Assumed IVa1 : Sort(0)
+=> #t
+Assumed IVPA : (Path Sort(0) IVa0 IVa1)
+=> #t
+Assumed ivx0 : IVa0
+=> #t
+#t
+#t
+Assumed ivsec : (Pi (i : I) (IVPA @ #0))
+=> #t
+#t
+Assumed PLa0 : Sort(0)
+=> #t
+Assumed PLa1 : Sort(0)
+=> #t
+Assumed PLPA : (Path Sort(0) PLa0 PLa1)
+=> #t
+Assumed plu : PLa0
+=> #t
+Assumed plw : PLa0
+=> #t
+Assumed plpp : (Path PLa0 plu plw)
+=> #t
+#t
+#t
+#t
+Assumed GGA : Sort(0)
+=> #t
+Assumed GGT : Sort(0)
+=> #t
+Assumed GGf : (Pi (_ : GGT) GGA)
+=> #t
+Assumed GGg : (Pi (_ : GGA) GGT)
+=> #t
+Assumed GGeta : (Pi (x : GGT) (Id GGT (GGg (GGf #0)) #0))
+=> #t
+Assumed GGeps : (Pi (y : GGA) (Id GGA (GGf (GGg #0)) #0))
+=> #t
+Assumed GGtt : GGT
+=> #t
+#t
+#t
+#t
+Assumed PpA : Sort(0)
+=> #t
+#t
+#t
+Assumed QA0 : Sort(0)
+Assumed QA1 : Sort(0)
+=> #t
+Assumed QPA : (Path Sort(0) QA0 QA1)
+=> #t
+Assumed QT0 : Sort(0)
+Assumed QT1 : Sort(0)
+=> #t
+Assumed QPT : (Path Sort(0) QT0 QT1)
+=> #t
+Assumed Qe : (Pi (i : I) (Equiv (QPT @ #0) (QPA @ #0)))
+=> #t
+Assumed Qj : I
+=> #t
+Assumed Qg : (Glue QA0 (cofib Qj i1) QT0 (Qe i0))
+=> #t
+#t
+Assumed SsA : Sort(0)
+=> #t
+Assumed Ssa : SsA
+=> #t
+#t
+#t
+Assumed Ssj : I
+=> #t
+#t
+Assumed ZT : Sort(0)
+=> #t
+Assumed Zg : ZT
+=> #t
+Assumed Zu : (Pi (i : I) ZT)
+=> #t
+Assumed Zk : I
+=> #t
+#t
+#t
+Assumed WA : Sort(0)
+Assumed WT : Sort(0)
+=> #t
+Assumed Wee : (Equiv WT WA)
+=> #t
+Assumed Wj : I
+=> #t
+Assumed Wg : (Glue WA (cofib Wj i1) WT Wee)
+=> #t
+Assumed Wu : (Pi (i : I) (Glue WA (cofib Wj i1) WT Wee))
+=> #t
+#t
+#t
+Assumed ZA : Sort(0)
+Assumed Za : ZA
+Assumed Zj : I
+=> #t
+#t
+#t
+Assumed YA0 : Sort(0)
+Assumed YA1 : Sort(0)
+Assumed YPA : (Path Sort(0) YA0 YA1)
+=> #t
+Assumed YT0 : Sort(0)
+Assumed YT1 : Sort(0)
+Assumed YPT : (Path Sort(0) YT0 YT1)
+=> #t
+Assumed Yef : (Pi (i : I) (Equiv (YPT @ #0) (YPA @ #0)))
+Assumed Ywt : (Pi (i : I) (YPT @ #0))
+=> #t
+#t
+Assumed ZZA0 : Sort(0)
+Assumed ZZA1 : Sort(0)
+Assumed ZZPA : (Path Sort(0) ZZA0 ZZA1)
+=> #t
+Assumed ZZT0 : Sort(0)
+Assumed ZZT1 : Sort(0)
+Assumed ZZPT : (Path Sort(0) ZZT0 ZZT1)
+=> #t
+Assumed ZZef : (Pi (i : I) (Equiv (ZZPT @ #0) (ZZPA @ #0)))
+Assumed ZZm : I
+Assumed ZZwt : (Pi (i : I) (ZZPT @ #0))
+=> #t
+#t
+#t
+#t

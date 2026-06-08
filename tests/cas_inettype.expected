@@ -1,0 +1,11 @@
+Assumed A : Sort(0)
+=> #t
+Assumed B : Sort(0)
+=> #t
+#t
+#f
+#t
+#t
+#f
+#t
+#t

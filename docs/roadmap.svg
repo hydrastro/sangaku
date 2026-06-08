@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="1178" viewBox="0 0 1300 1178" font-family="Georgia, 'Times New Roman', serif">
+<defs><radialGradient id="bg" cx="50%" cy="18%" r="88%"><stop offset="0%" stop-color="#17242e"/><stop offset="100%" stop-color="#0b1016"/></radialGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#eccf86"/><stop offset="100%" stop-color="#9a7b32"/></linearGradient>
+<linearGradient id="spine" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3a5566"/><stop offset="90%" stop-color="#c9a85c"/><stop offset="100%" stop-color="#eccf86"/></linearGradient></defs>
+<rect width="1300" height="1138" fill="url(#bg)"/>
+<rect x="14" y="14" width="1272" height="1110" fill="none" stroke="#c9a85c" stroke-opacity="0.45" stroke-width="1.5"/>
+<rect x="20" y="20" width="1260" height="1098" fill="none" stroke="#c9a85c" stroke-opacity="0.18" stroke-width="0.8"/>
+<text x="650.0" y="74" text-anchor="middle" fill="#eccf86" font-size="30" letter-spacing="3">LIZARD · THE CUBICAL KERNEL CLIMB</text>
+<text x="650.0" y="104" text-anchor="middle" fill="#a9b6bd" font-size="15" letter-spacing="1" font-style="italic">computational univalence, one provably-sound rule at a time, in the trusted kernel</text>
+<text x="650.0" y="132" text-anchor="middle" fill="#8a949b" font-size="12.5">native C dependent-type kernel · strict C89 -Werror · every rule guarded by a soundness test</text>
+<circle cx="436" cy="170" r="6" fill="url(#gold)"/><text x="449" y="174" fill="#cdbf9a" font-size="13">resident &amp; guarded</text>
+<circle cx="770" cy="170" r="6" fill="none" stroke="#c9a85c" stroke-width="1.4" stroke-dasharray="2 2"/><text x="783" y="174" fill="#cdbf9a" font-size="13">the next frontier</text>
+<line x1="212" y1="272" x2="212" y2="896" stroke="url(#spine)" stroke-width="3"/>
+<circle cx="212" cy="272" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="272" x2="245" y2="272" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="269" fill="#f2e7c8" font-size="15.5">transport tier: const / Pi / Sum / Sigma</text>
+<text x="255" y="286" fill="#8f9aa1" font-size="11.5" font-style="italic">structural + dependent Sigma via filler</text>
+<text x="186" y="277" text-anchor="end" fill="#5e7280" font-size="12">01</text>
+<circle cx="212" cy="324" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="324" x2="245" y2="324" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="321" fill="#f2e7c8" font-size="15.5">interval negation / meet / join</text>
+<text x="255" y="338" fill="#8f9aa1" font-size="11.5" font-style="italic">~, the distributive lattice, filler boundaries</text>
+<text x="186" y="329" text-anchor="end" fill="#5e7280" font-size="12">02</text>
+<circle cx="212" cy="376" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="376" x2="245" y2="376" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="373" fill="#f2e7c8" font-size="15.5">hcomp — empty / single / two-face</text>
+<text x="255" y="390" fill="#8f9aa1" font-size="11.5" font-style="italic">the overlap-compatibility lattice</text>
+<text x="186" y="381" text-anchor="end" fill="#5e7280" font-size="12">03</text>
+<circle cx="212" cy="428" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="428" x2="245" y2="428" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="425" fill="#f2e7c8" font-size="15.5">the Glue type + boundary + unglue</text>
+<text x="255" y="442" fill="#8f9aa1" font-size="11.5" font-style="italic">Glue A φ T e = T on the face; eliminator</text>
+<text x="186" y="433" text-anchor="end" fill="#5e7280" font-size="12">04</text>
+<circle cx="212" cy="480" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="480" x2="245" y2="480" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="477" fill="#f2e7c8" font-size="15.5">mk-equiv + coherences + gtransp</text>
+<text x="255" y="494" fill="#8f9aa1" font-size="11.5" font-style="italic">package f,g,η,ε; sound Glue-transp fragments</text>
+<text x="186" y="485" text-anchor="end" fill="#5e7280" font-size="12">05</text>
+<circle cx="212" cy="532" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="532" x2="245" y2="532" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="529" fill="#f2e7c8" font-size="15.5">comp — i-varying held face + comp2 two-face</text>
+<text x="255" y="546" fill="#8f9aa1" font-size="11.5" font-style="italic">the held-face fragment and the two-face brick</text>
+<text x="186" y="537" text-anchor="end" fill="#5e7280" font-size="12">06</text>
+<circle cx="212" cy="584" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="584" x2="245" y2="584" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="581" fill="#f2e7c8" font-size="15.5">WIRING — Path-type-line transport</text>
+<text x="255" y="598" fill="#8f9aa1" font-size="11.5" font-style="italic">transp ⟨i⟩(Path A u v) p → endpoints compute</text>
+<text x="186" y="589" text-anchor="end" fill="#5e7280" font-size="12">07</text>
+<circle cx="212" cy="636" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="636" x2="245" y2="636" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="633" fill="#f2e7c8" font-size="15.5">glue introduction + coherence + unglue-β</text>
+<text x="255" y="650" fill="#8f9aa1" font-size="11.5" font-style="italic">glue A φ T e u a, checks (equiv-fun e)u=a on φ</text>
+<text x="186" y="641" text-anchor="end" fill="#5e7280" font-size="12">08</text>
+<circle cx="212" cy="688" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="688" x2="245" y2="688" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="685" fill="#f2e7c8" font-size="15.5">Partial former + systems intro (psys)</text>
+<text x="255" y="702" fill="#8f9aa1" font-size="11.5" font-style="italic">the partial-elements layer: former + intro</text>
+<text x="186" y="693" text-anchor="end" fill="#5e7280" font-size="12">09</text>
+<circle cx="212" cy="740" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="740" x2="245" y2="740" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="737" fill="#f2e7c8" font-size="15.5">partial-section typing (Γ, φ ⊢)</text>
+<text x="255" y="754" fill="#8f9aa1" font-size="11.5" font-style="italic">face-restricted context refines hypotheses</text>
+<text x="186" y="745" text-anchor="end" fill="#5e7280" font-size="12">10</text>
+<circle cx="212" cy="792" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="792" x2="245" y2="792" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="789" fill="#f2e7c8" font-size="15.5">WIRING — general Glue transport (undecided φ)</text>
+<text x="255" y="806" fill="#8f9aa1" font-size="11.5" font-style="italic">the univalence computation — computes</text>
+<text x="186" y="797" text-anchor="end" fill="#5e7280" font-size="12">11</text>
+<circle cx="212" cy="844" r="9" fill="url(#gold)" stroke="#1a2730" stroke-width="2"/>
+<line x1="228" y1="844" x2="245" y2="844" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="841" fill="#f2e7c8" font-size="15.5">comp2: one-empty-face + overlap-coherence</text>
+<text x="255" y="858" fill="#8f9aa1" font-size="11.5" font-style="italic">composition bricks toward Glue-composition</text>
+<text x="186" y="849" text-anchor="end" fill="#5e7280" font-size="12">12</text>
+<circle cx="212" cy="896" r="12" fill="#16240f" stroke="#7BA05B" stroke-width="2.4"/><path d="M206 896 l4 4 l8 -9" fill="none" stroke="#a8d08a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="228" y1="896" x2="245" y2="896" stroke="#5e7280" stroke-width="1"/>
+<text x="255" y="893" fill="#eccf86" font-size="15.5">comp over a Glue line (Glue-composition)</text>
+<text x="255" y="910" fill="#8f9aa1" font-size="11.5" font-style="italic">type-checks AND computes: undecided ψ → glue [..] t1 a1, φ-held → u(i1) (verified)</text>
+<text x="186" y="901" text-anchor="end" fill="#5e7280" font-size="12">13</text>
+<circle cx="212" cy="924" r="12" fill="#16240f" stroke="#7BA05B" stroke-width="2.4"/><path d="M206 924 l4 4 l8 -9" fill="none" stroke="#a8d08a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="255" y="921" fill="#eccf86" font-size="15.5">heterogeneous comp over a Glue line (A, T, e varying)</text><text x="255" y="938" fill="#8f9aa1" font-size="11.5" font-style="italic">COMPUTES (φ const); for a VARYING φ the forall-face ∀i.φ is added, its held case wired — remainder: the equiv lemma</text><text x="186" y="929" text-anchor="end" fill="#5e7280" font-size="12">14</text>
+<line x1="60" y1="968" x2="1240" y2="968" stroke="#c9a85c" stroke-opacity="0.3" stroke-width="1"/>
+<text x="650.0" y="990" text-anchor="middle" fill="#eccf86" font-size="14.5" letter-spacing="1">kernel soundness 198 / 0  ·  NEW DIRECTION: the interaction-net engine now agrees with the trusted kernel on the shared λ-fragment</text>
+<text x="650.0" y="1016" text-anchor="middle" fill="#9aa6ac" font-size="12.5">face restriction expressed as a context DEFINITION (value = ep): index-stable, substitutes nothing — kt_whnf reduces the var on demand</text>
+<text x="650.0" y="1040" text-anchor="middle" font-size="11.5" fill="#7b858c">comp over a constant Glue line on an undecided ψ AUTO-REDUCES to glue [φ→u]…; decided ψ computes via the Glue boundary</text>
+<text x="650.0" y="1064" text-anchor="middle" font-size="11.5" fill="#7b858c">correctness: with ψ undecided (wiring active) but φ decided, the result = u(i1) on φ-held, = g0 on φ-empty — a genuine composition</text>
+<text x="650.0" y="1088" text-anchor="middle" font-size="11.5" fill="#6b757c">lizard is becoming an interaction-net machine: its combinator runtime (CON/DUP/ERA, exact-GMP) differentially AGREES with the audited tree-walker on Church numerals — built ALONGSIDE kt_whnf, kernel untouched; carrying dependent typing on the net is the open frontier</text>
+</svg>

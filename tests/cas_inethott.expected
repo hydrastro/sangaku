@@ -1,0 +1,13 @@
+Assumed A : Sort(0)
+=> #t
+Assumed a : A
+=> #t
+Assumed b : A
+=> #t
+#t
+#t
+#t
+#t
+#t
+#t
+#t

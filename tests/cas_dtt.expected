@@ -1,0 +1,9 @@
+#t
+(pi (var 0) (var 1))
+(pi type (pi (var 0) (var 1)))
+#t
+#t
+ill-typed
+ill-typed
+#f
+ill-typed

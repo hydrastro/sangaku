@@ -376,3 +376,21 @@ decomposition (cadunsat.lisp); and the doubly-exponential cost is documented as 
 cell growth measured directly. What remains genuinely open: MULTI-PARAMETER algebraic-number sections (the tower of
 extensions cadqenr does not build for k >= 2), and the worst-case doubly-exponential cost itself, which is inherent
 to the problem and cannot be removed -- only avoided on the easy instances, which cadwit and cadunsat do.
+
+
+## Univalence floor (Floor 5): trust base is the surface cubical layer, not the audited kernel
+
+Floors 1-4 (simple, dependent, modal, observational) are anchored to lizard's audited ~1,350-line trusted kernel
+(kt_infer / kt_whnf, via the kernel-* primitives) and are sound by agreement with that audited core.  Floor 5
+(univalence, cas/inetunivalence.lisp) CANNOT get that exact guarantee, and says so: the trusted kernel (kernel.c)
+has Path and Interval but NO Glue / ua / Equiv.  The univalence machinery lives in lizard's SURFACE cubical layer
+(tt_check_cubical.c, ~470 lines, plus lib/cubical.lisp + lib/univalence.lisp), which is a real, shipping,
+runnable checker/evaluator -- but a LARGER, LESS-AUDITED trust base, and it does not round-trip its cubical typing
+through the trusted kernel.
+
+The floor splits accordingly: the Path/refl fragment that DOES live in the trusted kernel is anchored to kt_infer
+(sangaku example 450, with the false-equation rejection -- full audited guarantee), while the genuinely-cubical
+constructs (id-equiv, Glue, ua) are anchored to the surface cubical layer (lizard example 392) and explicitly
+labelled as surface, not audited-kernel.  Full univalence with the audited-kernel guarantee would require the Glue/
+ua/Equiv machinery to be added to the trusted kernel and re-audited -- that is roadmap.  This is named, not hidden:
+no part of Floor 5 claims univalence rests on the audited kernel.

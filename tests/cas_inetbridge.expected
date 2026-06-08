@@ -1,0 +1,11 @@
+Assumed A : Sort(0)
+=> #t
+Assumed a : A
+=> #t
+identity
+identity
+lam
+lam
+identity
+#t
+collapsed-superposition

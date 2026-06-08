@@ -1,0 +1,13 @@
+Assumed Nat : Sort(0)
+=> #t
+Assumed F : (Pi (n : Nat) Sort(0))
+=> #t
+Assumed mk : (Pi (n : Nat) (F #0))
+=> #t
+#t
+#t
+#t
+#t
+#t
+#t
+#t

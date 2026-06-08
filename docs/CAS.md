@@ -5121,3 +5121,131 @@ feature.  What these techniques achieve is a solver that is ALGORITHMICALLY comp
 implements every published technique that is not pure low-level engineering, so it is as good as it can be on its
 substrate -- slow only because of the interpreter, not because of missing method, and the right SAT engine for
 Sangaku's own purposes (the SMT layer, certificate checking) where the instances are small.
+
+## Floor 0 of lizard's foundations: an interaction-net reducer
+
+Beyond the computer-algebra and SAT/SMT layers, Sangaku's host language lizard is intended to grow a foundational
+type theory built on an interaction-net substrate.  inet.lisp is Floor 0 of that effort: a bare interaction-net
+reduction engine, the parallel local-rewriting analogue of the lambda calculus, prototyped in Lisp so the design
+can be validated before porting into lizard's C kernel.  It is only a computational system -- no types or logic yet.
+The four 3-arrow agents (LAM, APP, DUP, SUP) are distinguished by port polarity, which derives the legal interaction
+table (principals interact only at opposite polarity, giving the four pairs {LAM,DUP}x{APP,SUP}); matching decides
+annihilate (LAM~APP beta, DUP~SUP copy-completion) versus commute (LAM~DUP lambda-copying, APP~SUP distribution).
+The bet under test -- that polarity replaces the labels HVM/Lamping use to keep duplications from interfering -- is
+validated on the elementary-affine fragment by the verified examples: (lambda x.x)(lambda y.y) reduces to the
+identity, a duplicator copies a lambda into two correct identities, and the two compose.  See docs/LIZARD_FOUNDATIONS.md
+for the full design and the roadmap above Floor 0 (the two lattices, the cube, the Curry-Howard bridge), which is
+explicitly conjecture-to-be-built, not claimed.
+
+## Floor 1 of lizard's foundations: a simply-typed discipline with a type-checker
+
+On the interaction-net substrate (Floor 0, inet.lisp) sits stnet.lisp: a simply-typed discipline with a type-checker
+-- the lambda-arrow base of the cube of features, the analogue of simply-typed lambda calculus as the base of
+Barendregt's cube.  This is the first floor that earns the name "type theory": the engine now checks, not just
+reduces.  It is explicitly NOT yet polymorphism, dependency, or HoTT.  Types live on the ports (a base symbol or a
+function type (arr A B)), so type-checking is local wire-consistency -- a wire is well-typed iff it joins two ports
+of the same type at opposite polarity, a producer-of-T meeting an observer-of-T -- which makes the
+construction/observation duality a literal property of every wire.  The agent rules (LAM introduces A -> B, APP
+eliminates it) are shaped so the beta interaction preserves typing.  Verified: the typed identity is well-typed at
+o -> o and is therefore a proof of o -> o; an ill-typed net is rejected; and a typed application is well-typed before
+reduction, reduces, and remains well-typed after -- subject reduction, the foundational type-preservation property,
+and the Curry-Howard bridge in miniature.  See docs/LIZARD_FOUNDATIONS.md.
+
+## Floor 2 of lizard's foundations: a dependent type checker (lambda-P)
+
+On the simply-typed floor sits dtt.lisp: a dependent type checker, lambda-P -- the Pi-type corner of the cube and
+the floor where the two-lattice structure becomes operational.  Dependency means types can mention terms, so a
+context (the co-universe object) becomes load-bearing: the judgment Gamma |- a : A is the contravariant pairing of
+the construction a : A against the observation Gamma, and the context grows as the checker enters binders.  It is
+lambda-P -- Pi-types, a universe, a bidirectional checker with conversion (type equality up to normalization), terms
+in de Bruijn form -- and is explicitly NOT the full Calculus of Constructions, NOT univalence, NOT HoTT, and does
+NOT adopt Type : Type (Girard's paradox).  Verified: the polymorphic identity infers (A:Type) -> A -> A and checks
+against it; applying it to a type computes the instance by substitution; and ill-typed terms are rejected.  See
+docs/LIZARD_FOUNDATIONS.md.
+
+## Floor 3 of lizard's foundations: intensional identity types (the doorway to homotopy)
+
+On the dependent type checker sits idt.lisp: intensional identity types -- the type (Id A x y) of proofs that x
+equals y, with the J eliminator (path induction).  This is the doorway to the homotopy reading of type theory, where
+"types are spaces and equalities are paths" begins.  The four rules (formation, introduction via refl, J
+elimination, and the J-computation rule that collapses J to the base case on reflexivity) are implemented, and two
+theorems are DERIVED from J -- genuinely proved, not postulated: symmetry (from p : Id A x y a proof of Id A y x)
+and transport (from p : Id A x y and u : P x a term of type P y).  Verified: all four rules; symmetry and transport
+infer, check, and compute (sym of refl is refl, transport along refl is the identity).  HONEST SCOPE: this is
+intensional Martin-Lof identity types, the floor UNDER HoTT, NOT HoTT -- univalence is not added (an axiom beyond J),
+higher inductive types are not added, Type : Type is not adopted.  See docs/LIZARD_FOUNDATIONS.md.
+
+## R2: the interaction net is faithful to lizard's trusted kernel
+
+Floor 0's interaction-net reducer (cas/inet.lisp) and lizard's trusted kernel reducer kt_whnf compute the same
+beta-reduction -- now demonstrated, not assumed.  cas/inetbridge.lisp reduces a corpus of closed lambda terms both
+ways: through the interaction net (graph rewriting) and through the kernel (kernel-reduce, i.e. kt_whnf), then
+checks the normal forms land in the same structural class.  The kernel's own trusted equality (kernel-equal?, which
+calls kt_equal) independently certifies that the kernel's reducts are what the classification claims.  Verified: the
+identity (I I), the constant former applied (K I), nested beta (I (I I)), and their combinations all agree between
+the two reducers.  The harness also exhibits the correctness boundary concretely: outside the one-source-of-
+duplication fragment, the unlabeled net collapses a superposition where the kernel would not -- reproducing the
+documented restriction of unlabeled interaction-net sharing.  Nothing in this modifies the trusted kernel; it is
+verification establishing that the parallel net evaluator is faithful to the sequential trusted reducer on the safe
+fragment, turning Floor 0 from a stand-alone experiment into a grounded component of lizard's foundations.
+
+## Floor 1: typed ports, anchored to the trusted kernel
+
+The typed-port discipline over the interaction net (cas/inettype.lisp) -- the lambda-arrow corner of the cube.  Each
+port carries a simple type; a wire is well-formed exactly when it joins a producer of type T to an observer of type
+T, so type-checking is local wire-consistency, one pass over the wires -- the construction/observation duality as a
+literal property of every wire.  The typed-port check is proven to AGREE with lizard's trusted kernel: a net passes
+wire-consistency if and only if kernel-check accepts the corresponding term at the corresponding type.  Verified:
+the identity net at A and the K net at A,B pass and the kernel accepts; an ill-typed net (a wire joining A to B)
+fails, and the kernel rejects the corresponding claim; the verdicts agree on both acceptance and rejection.  This
+mirrors R2 -- where the net's reduction was proven faithful to kt_whnf -- for typing: the net's typing is faithful
+to kt_infer.  So the typed-port layer is the kernel's discipline expressed locally on the graph, not a weaker
+parallel one.  Floor 1 is the simply-typed corner; the rest of the cube is higher floors.
+
+## Floor 2: dependent types, the net carries / the kernel checks
+
+The first axis of the cube (types depending on terms), built solid by anchoring to the trusted kernel
+(cas/inetdep.lisp).  Floor 1's locality (a fixed type per wire) does not survive dependency: in (Pi (x : A) B) the
+codomain B may mention x, so a port's type depends on the value at another port, and a naive local check would be
+unsound.  Floor 2 therefore makes the net CARRY the dependent derivation (carriers aligned with the agents: lam,
+app, the Pi former) and DELEGATES the check to the trusted kt_infer.  Verified: the polymorphic identity and a
+dependent function type read back exactly to kernel syntax; with a type family F : Nat -> Type and mk : Pi(n). F n,
+the kernel accepts (mk zero) at (F zero) but rejects it at (F (succ zero)); and the net's verdict equals the
+kernel's on acceptance and on the discriminating rejection.  This extends the Floor-1 agreement to the dependent
+fragment with zero net-native dependent-checking code -- the dependency is handled by the audited kernel, the solid
+way to add the cube's first axis.
+
+## Floor 3: contextual modal type theory, anchored to the trusted S4 kernel
+
+The modal axis (cas/inetmodal.lisp): necessity (Box) with the valid/truth context distinction of contextual modal
+type theory (the Delta;Gamma split -- Delta valid survives box-entry, Gamma truth is dropped, Delta's preservation
+across nested boxes is the S4 4-axiom).  The net carries the modal derivation (box/unbox) and delegates the check to
+lizard's trusted dual-context S4 modal kernel via infer-modal.  Asserts acceptance-agreement -- the net accepts iff
+the trusted kernel accepts -- demonstrated guard-free (an accepted modal term infers a Box type, via Box?) including
+the 4-axiom at depth 3, the feature distinguishing S4.  Named limitation (docs/LIMITATIONS.md): the truth-vs-valid
+rejection (strict S4's soundness heart) is enforced by the trusted kernel (lizard examples 49, 51) but is not
+re-demonstrated here because that reject path raises an evaluator error guard cannot catch in this build.  Honest
+about the wall; the soundness rests on the trusted kernel as designed.
+
+## Co-universe / reflection: the observation side made operational
+
+inetreflect.lisp makes concrete the insight that the co-universe -- the observation side of the construction/
+observation duality -- is the hidden structure behind a language's reflection.  Built on the modal floor because,
+under Pfenning-Davies' judgmental reconstruction, necessity (Box) and reflection are one phenomenon: a necessary
+(valid, closed) term is exactly code that can be quoted and reflected upon.  On lizard's real homoiconic terms:
+observing a term's structure (head, binder, subterms) is the construction -> observation direction; rebuilding from
+observed parts is the contravariant observation -> construction direction; the round-trip is exact, witnessing the
+two lattices are genuine duals; and the modal Box carrier viewed as code is its surface term, the code view itself
+being observable (reflection is recursive).  A demonstration of the duality tied to the anchored modal layer, not a
+new trusted typing rule.
+
+## Floor 4: higher observational type theory, anchored to the trusted kernel
+
+HOTT (cas/inethott.lisp) is the type theory whose defining feature is that equality is determined by observation
+(functions pointwise, pairs componentwise) -- the observational successor to MLTT, distinct from homotopy type
+theory, and exactly the co-universe side of the construction/observation duality.  The net carries the equality
+derivation (Id / Path / refl) and delegates the check to lizard's trusted kernel.  Verified: the carriers read back
+exactly to kernel syntax; the kernel accepts (Id A a a) and (Path A a a) at Sort 0 and (refl a) at (Id A a a), and
+REJECTS (refl a) at (Id A a b) for distinct a,b (refl cannot prove a false equation); the net verdict equals the
+kernel verdict on acceptance and rejection; and equality is read operationally as matching observations.  The
+observational-equality core, anchored; full univalence remains roadmap.
